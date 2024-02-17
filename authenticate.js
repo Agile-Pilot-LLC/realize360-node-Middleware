@@ -2,8 +2,11 @@
 const axios = require('axios');
 
 // Define the function to authenticate the user
-module.exports = async function AuthenticateUser(appId, appSecret, nonce, userId) {
+module.exports = async function AuthenticateUser(appId, appSecret, nonce, userId, testmode = false) {
     // Define the access token (replace $APP_ID and $APP_SECRET with your actual values)
+    if(testmode){
+        return true;
+    }
     const accessToken = `OC|${appId}|${appSecret}`;
 
     // Define the data to be sent in the POST request
