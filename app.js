@@ -39,7 +39,7 @@ function storeRequestHash(webhookhash){
 
 }
 
-app.get(`${sendGenerationString}`, (req, res) => {
+app.post(`${sendGenerationString}`, (req, res) => {
   const generationId = req.query.g;
   console.log("Webhook Hit by Blockade API for generation ID: " + generationId);
   // log request data
@@ -49,6 +49,9 @@ app.get(`${sendGenerationString}`, (req, res) => {
 app.get(`/${endpointString}`, async (req, res) => {
   // Step 1: Request made to the server
   const { appId, appSecret, nonce, userId, prompt } = req.query;
+  if(!appId || !appSecret || !nonce || !userId || !prompt){
+    failRequest(res);
+  }
   console.log("Recieved authentication request from IP: " + req.ip + " at time: " + Date.now('YYYY-MM-DDTHH:mm:ss.SSSZ'));
   // Step 2: Authenticate the user via Oculus API
   await authenticateUser(axios, appId, appSecret, nonce, userId, TESTMODE).then(async (result) => {
