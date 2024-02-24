@@ -61,7 +61,7 @@ app.get(`/${endpointString}`, async (req, res) => {
             const webHookHash = md5(Math.random().toString());
             // Step 4: Get 360 Image from Blockade API
             
-            await get360Image(axios, prompt, process.env.BLOCKADE_API_KE, webHookHash).then((response) => {
+            await get360Image(axios, prompt, webHookHash).then((response) => {
               if(response){
                 // Create webhook post endpoint for blockade api to call when image generation is done
                 createTemporaryWebhookEndpoint(app, webHookHash);

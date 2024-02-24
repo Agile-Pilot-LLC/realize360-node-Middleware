@@ -1,9 +1,9 @@
 // import dotenv
 require('dotenv').config();
 
-module.exports = async function get360Image(axios = null, prompt, key, webHookHash) {
+module.exports = async function get360Image(axios = null, prompt, webHookHash) {
     const headers = {
-        'x-api-key': key,
+        'x-api-key': process.env.BLOCKADE_API_KEY,
         'Content-Type': 'application/json'
     };
 
