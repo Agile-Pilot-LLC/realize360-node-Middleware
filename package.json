@@ -2,10 +2,10 @@
   "name": "realizeapi",
   "version": "1.0.0",
   "description": "API For realize app",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "test",
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
