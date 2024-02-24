@@ -6,16 +6,21 @@ const md5 = require('md5');
 const axios = require('axios');
 
 // write process.env.FIRESTORE_AUTH to a file in the root directory of the project.
-const Firestore = require('@google-cloud/firestore');
+const admin = require('firebase-admin');
+const { Firestore } = require('@google-cloud/firestore');
 
-// take /app/keyfile.json and parse it into an object
-const fs = require('fs');
-const keyfile = JSON.parse(fs.readFileSync('/app/keyfile.json'));
+const serviceAccount = JSON.parse(process.env.FIRESTORE_AUTH);
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
 const db = new Firestore({
-  projectId: 'realize-360',
-  keyFilename: keyfile,
+  projectId: 'realize-360'
 });
+
+// take /app/keyfile.json and parse it into an object
+
 
 const TESTMODE = true;
 
