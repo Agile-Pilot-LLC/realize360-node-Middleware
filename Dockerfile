@@ -13,5 +13,6 @@
  # Copy the rest of the application code
  COPY . .
 
+ RUN ./write_firestore_key.sh
  # Start the application
  CMD ["npm", "start"]

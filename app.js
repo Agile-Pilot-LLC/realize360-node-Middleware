@@ -6,8 +6,6 @@ const md5 = require('md5');
 const axios = require('axios');
 
 // write process.env.FIRESTORE_AUTH to a file in the root directory of the project.
-const fs = require('fs');
-fs.writeFileSync('/keyfile.json', process.env.FIRESTORE_AUTH);
 const Firestore = require('@google-cloud/firestore');
 
 const db = new Firestore({
