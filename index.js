@@ -6,12 +6,14 @@ const bodyParser = require('body-parser');
 const PORT = parseInt(parseInt(process.env.PORT)) || 8080;
 
 const endpointString = md5(process.env.ENDPOINT);
+const sendGenerationString = md5(process.env.SEND_GENERATION);
 
 app.use(helmet(), bodyParser.json());
 
 app.listen(PORT, () =>
   {
     console.log(`realizeAPI listening on ${PORT}`)
-    console.log(`Endpoint: ${endpointString}`)
+    console.log(`GET Endpoint: ${endpointString}`)
+    console.log(`POST Endpoint: ${sendGenerationString}`)
   }
 );

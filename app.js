@@ -4,6 +4,9 @@ const express = require('express');
 const app = express();
 const md5 = require('md5');
 const axios = require('axios');
+const { initializeApp } = require('firebase-admin/app');
+
+const firebaseApp = initializeApp();
 
 const TESTMODE = true;
 
@@ -46,7 +49,7 @@ app.post(`${sendGenerationString}`, (req, res) => {
   }
   console.log("Webhook Hit by Blockade API for generation ID: " + generationId);
   // log request data
-  console.log(req.body);
+  console.log(req);
   res.status(200).send("Received :) - Thanks!");
 });
 
