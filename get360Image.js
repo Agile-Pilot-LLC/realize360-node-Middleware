@@ -22,7 +22,7 @@ module.exports = async function get360Image(axios = null, genReceiveEndpoint, pr
     const endpoint = 'https://backend.blockadelabs.com/api/v1/skybox';
 
     // Perform the POST request using Axios
-    axios.post(endpoint, testData, { headers })
+    axios.post(endpoint, data, { headers })
         .then(response => {
             console.log('Response:', response.data);
             return response.data;

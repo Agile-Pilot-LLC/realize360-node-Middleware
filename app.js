@@ -53,7 +53,7 @@ app.get(`/${endpointString}`, async (req, res) => {
     failRequest(res);
   }
   console.log("Query Params Recieved: " + JSON.stringify(req.query));
-  
+
   console.log("Recieved authentication request from IP: " + req.ip + " at time: " + Date.now('YYYY-MM-DDTHH:mm:ss.SSSZ'));
   // Step 2: Authenticate the user via Oculus API
   await authenticateUser(axios, appId, appSecret, nonce, userId, TESTMODE).then(async (result) => {
@@ -65,7 +65,7 @@ app.get(`/${endpointString}`, async (req, res) => {
           const webHookHash = md5(Math.random().toString());
           // Step 4: Get 360 Image from Blockade API
           
-          await get360Image(axios, prompt, webHookHash).then((response) => {
+          await get360Image(axios, prompt, sendGenerationString, webHookHash).then((response) => {
             if(response){
               // Create webhook post endpoint for blockade api to call when image generation is done
               console.log('Received response from Blockade API, polling DB for image');
