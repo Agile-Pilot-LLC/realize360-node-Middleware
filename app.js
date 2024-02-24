@@ -49,6 +49,16 @@ function storeRequestHash(webhookhash){
 
 }
 
+app.get('/testDB', async (req, res) => {
+  // get all documents in the 'users' collection
+  const snapshot = await db.collection('users').get();
+  snapshot.forEach((doc) => {
+    console.log(doc.id, '=>', doc.data());
+  }
+  );
+  console.log(snapshot);
+  res.send('Test Complete');
+});
 app.post(`${sendGenerationString}`, (req, res) => {
   const generationId = req.query.g;
   if(!generationId){
