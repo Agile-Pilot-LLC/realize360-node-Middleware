@@ -13,6 +13,7 @@
  # Copy the rest of the application code
  COPY . .
 
+ RUN chmod +x ./write_firestore_key.sh
  RUN ./write_firestore_key.sh
  # Start the application
  CMD ["npm", "start"]
