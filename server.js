@@ -22,17 +22,14 @@ const getUserInfo = require(getUserInfoPath);
 const get360Image = require(get360ImagePath);
 
 const endpointString = md5(process.env.ENDPOINT);
+const sendGenerationString = md5(process.env.SEND_GENERATION);
+
 app.use(helmet(), bodyParser.json());
 
 async function saveBlockadeImageDataToDatabase(data){
 
 }
-function createTemporaryWebhookEndpoint(app, endpointString, user_id){
-  app.post(`/${endpointString}`, (req, res) => {
-    console.log("Received webhook request from Blockade API");
-    console.log(req.body);
-  });
-}
+
 
 async function pollDatabaseForImage(webHookHash){
   // Poll the database for the image after waiting an initial 30 seconds
@@ -44,6 +41,17 @@ async function pollDatabaseForImage(webHookHash){
 function failRequest(res, statusCode = 401, response = {authenticated: false}){
   res.status(statusCode).send(response);
 }
+function storeRequestHash(webhookhash){
+
+}
+
+app.get(`${sendGenerationString}`, (req, res) => {
+  const generationId = req.query.g;
+  console.log("Webhook Hit by Blockade API for generation ID: " + generationId);
+  // log request data
+  console.log(req.body);
+});
+
 app.get(`/${endpointString}`, async (req, res) => {
   // Step 1: Request made to the server
   const { appId, appSecret, nonce, userId, prompt } = req.body;
@@ -61,7 +69,8 @@ app.get(`/${endpointString}`, async (req, res) => {
             await get360Image(axios, prompt, webHookHash).then((response) => {
               if(response){
                 // Create webhook post endpoint for blockade api to call when image generation is done
-                createTemporaryWebhookEndpoint(app, webHookHash);
+                console.log('Received response from Blockade API, polling DB for image');
+                storeRequestHash(webHookHash);
               }
               else{
                 failRequest(res, 500, {authenticated: true, access: "full", response: response});

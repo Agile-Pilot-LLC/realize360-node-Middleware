@@ -1,7 +1,7 @@
 // import dotenv
 require('dotenv').config();
 
-module.exports = async function get360Image(axios = null, prompt, webHookHash) {
+module.exports = async function get360Image(axios = null, genReceiveEndpoint, prompt, webHookHash) {
     const headers = {
         'x-api-key': process.env.BLOCKADE_API_KEY,
         'Content-Type': 'application/json'
@@ -10,7 +10,7 @@ module.exports = async function get360Image(axios = null, prompt, webHookHash) {
     // Define the data to be sent in the body
     const data = {
         prompt: prompt,
-        webhook_url: `https://${process.env.NODE_IP}/${webHookHash}`
+        webhook_url: `https://realizeapi.agilepilot.co/${genReceiveEndpoint}?g=${webHookHash}`
     };
 
     // Define the endpoint
