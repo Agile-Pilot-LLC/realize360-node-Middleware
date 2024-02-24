@@ -52,6 +52,8 @@ app.get(`/${endpointString}`, async (req, res) => {
   if(!appId || !appSecret || !nonce || !userId || !prompt){
     failRequest(res);
   }
+  console.log("Query Params Recieved: " + JSON.stringify(req.query));
+  
   console.log("Recieved authentication request from IP: " + req.ip + " at time: " + Date.now('YYYY-MM-DDTHH:mm:ss.SSSZ'));
   // Step 2: Authenticate the user via Oculus API
   await authenticateUser(axios, appId, appSecret, nonce, userId, TESTMODE).then(async (result) => {
