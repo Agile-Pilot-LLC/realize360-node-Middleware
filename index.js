@@ -15,5 +15,6 @@ app.listen(PORT, () =>
     console.log(`realizeAPI listening on ${PORT}`)
     console.log(`GET Endpoint: ${endpointString}`)
     console.log(`POST Endpoint: ${sendGenerationString}`)
+    console.log('FIRESTORE AUTH: ' + process.env.FIRESTORE_AUTH)
   }
 );
