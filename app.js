@@ -10,7 +10,7 @@ const Firestore = require('@google-cloud/firestore');
 
 const db = new Firestore({
   projectId: 'realize-360',
-  keyFilename: '/keyfile.json',
+  keyFilename: '/app/keyfile.json',
 });
 
 const TESTMODE = true;
