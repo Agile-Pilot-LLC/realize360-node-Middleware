@@ -13,6 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Create ENV file
+        run: |
+          echo "DB_HOST=${{ secrets.DB_HOST }}" > .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "BLOCKADE_API_KEY=${{ secrets.BLOCKADE_API_KEY }}" >> .env
+          echo "NODE_IP=${{ secrets.INSTANCE_IP }}" >> .env
+          echo "ENDPOINT=${{ secrets.ENDPOINT }}" >> .env
+
       - name: Set up SSH key and known_hosts file
         run: |
           mkdir -p $HOME/.ssh
@@ -27,17 +38,7 @@ jobs:
       - name: Deploy code to GCE
         run: |
           scp -r -i $HOME/.ssh/deploy_key ./* $INSTANCE_USER@$INSTANCE_IP:/home/$INSTANCE_USER/app
+          
         env: 
           INSTANCE_IP: ${{ secrets.INSTANCE_IP }}
           INSTANCE_USER: ${{ secrets.INSTANCE_USER }}
-
-      - name: Create ENV file
-        run: |
-          echo "DB_HOST=${{ secrets.DB_HOST }}" > .env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-          echo "BLOCKADE_API_KEY=${{ secrets.BLOCKADE_API_KEY }}" >> .env
-          echo "NODE_IP=${{ secrets.INSTANCE_IP }}" >> .env
-          echo "ENDPOINT=${{ secrets.ENDPOINT }}" >> .env
