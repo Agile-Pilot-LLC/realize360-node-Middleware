@@ -33,10 +33,7 @@ async function saveBlockadeImageDataToDatabase(data){
 function createTemporaryWebhookEndpoint(app, endpointString, user_id){
   app.post(`/${endpointString}`, (req, res) => {
     console.log("Received webhook request from Blockade API");
-    saveBlockadeImageDataToDatabase(req.body);
-    res.status(200).send({authenticated: true, access: "full", response: response});
-
-    app.delete(`/${endpointString}`);
+    console.log(req.body);
   });
 }
 
@@ -45,6 +42,10 @@ async function pollDatabaseForImage(webHookHash){
   // If the image is ready, return it
   // If the image is not ready, try again in 5 seconds. After 5 minutes, return an error
 
+}
+
+function failRequest(res, statusCode = 401, response = {authenticated: false}){
+  res.status(statusCode).send(response);
 }
 app.get(`/${endpointString}`, async (req, res) => {
   // Step 1: Request made to the server
@@ -66,20 +67,17 @@ app.get(`/${endpointString}`, async (req, res) => {
                 createTemporaryWebhookEndpoint(app, webHookHash);
               }
               else{
-                res.status(500).send({authenticated: true, access: "full", response: response});
+                failRequest(res, 500, {authenticated: true, access: "full", response: response});
               }
             });
-            
-
-            
           }
           else{
-            res.status(401).send({authenticated: true, access: "none"});
+            failRequest(res);
           }
         });
       }
       else{
-        res.status(401).send({authenticated: false});
+        failRequest(res);
       }
     });;
     // Respond to the client as needed
