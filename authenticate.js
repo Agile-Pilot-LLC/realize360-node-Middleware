@@ -1,8 +1,5 @@
-// Import the axios library
-const axios = require('axios');
-
 // Define the function to authenticate the user
-module.exports = async function AuthenticateUser(appId, appSecret, nonce, userId, testmode = false) {
+module.exports = async function AuthenticateUser(axios = null, appId, appSecret, nonce, userId, testmode = false) {
     // Define the access token (replace $APP_ID and $APP_SECRET with your actual values)
     if(testmode){
         return true;

@@ -1,8 +1,8 @@
-module.exports = async function getUserInfo(userId, testmode = false){
+module.exports = async function getUserInfo(axios = null, userId, testmode = false){
     if(testmode){
         return {
-            id: "1234567890",
-            access: "full"
+            id: 243234,
+            access: "full",
         }
     };
 };
