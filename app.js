@@ -48,41 +48,39 @@ app.get(`${sendGenerationString}`, (req, res) => {
 
 app.get(`/${endpointString}`, async (req, res) => {
   // Step 1: Request made to the server
-  const { appId, appSecret, nonce, userId, prompt } = req.body;
-    console.log("Recieved authentication request from IP: " + req.ip + " at time: " + Date.now('YYYY-MM-DDTHH:mm:ss.SSSZ'));
-    // Step 2: Authenticate the user via Oculus API
-    await authenticateUser(axios, appId, appSecret, nonce, userId, TESTMODE).then(async (result) => {
-      if(result){
-        // Step 3: Get user info/access permissions from Realize Database
-        await getUserInfo(axios, userId, TESTMODE).then(async (userInfo) => {
-          if(userInfo.access === "full"){
-            console.log("Received user info, full access. Calling Blockade API");
-            const webHookHash = md5(Math.random().toString());
-            // Step 4: Get 360 Image from Blockade API
-            
-            await get360Image(axios, prompt, webHookHash).then((response) => {
-              if(response){
-                // Create webhook post endpoint for blockade api to call when image generation is done
-                console.log('Received response from Blockade API, polling DB for image');
-                storeRequestHash(webHookHash);
-              }
-              else{
-                failRequest(res, 500, {authenticated: true, access: "full", response: response});
-              }
-            });
-          }
-          else{
-            failRequest(res);
-          }
-        });
-      }
-      else{
-        failRequest(res);
-      }
-    });;
-    // Respond to the client as needed
-
+  console.log(req.body);
+  res.send('Received Request');
 });
+
+// app.get(`/${endpointString}`, async (req, res) => {
+//   // Step 1: Request made to the server
+//   const { appId, appSecret, nonce, userId, prompt } = req.body;
+//   console.log("Recieved authentication request from IP: " + req.ip + " at time: " + Date.now('YYYY-MM-DDTHH:mm:ss.SSSZ'));
+//   // Step 2: Authenticate the user via Oculus API
+//   await authenticateUser(axios, appId, appSecret, nonce, userId, TESTMODE).then(async (result) => {
+//     if(result){
+//       // Step 3: Get user info/access permissions from Realize Database
+//       await getUserInfo(axios, userId, TESTMODE).then(async (userInfo) => {
+//         if(userInfo.access === "full"){
+//           console.log("Received user info, full access. Calling Blockade API");
+//           const webHookHash = md5(Math.random().toString());
+//           // Step 4: Get 360 Image from Blockade API
+          
+//           await get360Image(axios, prompt, webHookHash).then((response) => {
+//             if(response){
+//               // Create webhook post endpoint for blockade api to call when image generation is done
+//               console.log('Received response from Blockade API, polling DB for image');
+//               storeRequestHash(webHookHash);
+//             }
+//             else{
+//               failRequest(res, 500, {authenticated: true, access: "full", response: response});
+//             }});}
+//         else{
+//           failRequest(res);
+//         }});}
+//     else{
+//       failRequest(res);
+// }});;});
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
