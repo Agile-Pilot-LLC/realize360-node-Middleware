@@ -1,6 +1,7 @@
 const app = require('./app.js');
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
+const md5 = require('md5');
 
 const PORT = parseInt(parseInt(process.env.PORT)) || 8080;
 
