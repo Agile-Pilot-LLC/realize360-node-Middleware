@@ -13,6 +13,7 @@ const serviceAccount = JSON.parse(process.env.FIRESTORE_AUTH);
 
 const db = new Firestore({
   projectId: 'realize-360',
+  databaseId: 'realize-db',
   credentials: serviceAccount
 });
 
