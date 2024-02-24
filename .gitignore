@@ -1,0 +1,4 @@
+https/*
+node_modules
+.dccache
+.env
