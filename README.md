@@ -1,6 +1,6 @@
 # Local Test Commands
 
-curl -X GET -H "Content-Type: application/json" -d '{"appId": "yourAppId", "appSecret": "yourAppSecret", "nonce": "yourNonce", "userId": "yourUserId", "prompt": "yourPrompt"}' https://realizeapi-duyrq6q27q-uc.a.run.app/2fe1b096ed13e45b2bfb2751bf922cae
+curl https://realize.agilepilot.co/2fe1b096ed13e45b2bfb2751bf922cae\?appId=131\&appSecret=232\&nonce=123\&userId=123\&prompt=mountains
 
 curl https://realize.agilepilot.co/
 
