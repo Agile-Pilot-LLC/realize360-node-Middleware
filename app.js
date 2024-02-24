@@ -59,7 +59,7 @@ app.get('/testDB', async (req, res) => {
   console.log(snapshot);
   res.send('Test Complete');
 });
-app.post(`${sendGenerationString}`, (req, res) => {
+app.post(`/${sendGenerationString}`, (req, res) => {
   const generationId = req.query.g;
   if(!generationId){
     failRequest(res, 400, {error: "Failed."});
