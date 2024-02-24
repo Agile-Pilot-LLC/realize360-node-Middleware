@@ -41,9 +41,13 @@ function storeRequestHash(webhookhash){
 
 app.post(`${sendGenerationString}`, (req, res) => {
   const generationId = req.query.g;
+  if(!generationId){
+    failRequest(res, 400, {error: "Failed."});
+  }
   console.log("Webhook Hit by Blockade API for generation ID: " + generationId);
   // log request data
   console.log(req.body);
+  res.status(200).send("Received :) - Thanks!");
 });
 
 app.get(`/${endpointString}`, async (req, res) => {
