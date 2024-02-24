@@ -8,9 +8,13 @@ const axios = require('axios');
 // write process.env.FIRESTORE_AUTH to a file in the root directory of the project.
 const Firestore = require('@google-cloud/firestore');
 
+// take /app/keyfile.json and parse it into an object
+const fs = require('fs');
+const keyfile = JSON.parse(fs.readFileSync('/app/keyfile.json'));
+
 const db = new Firestore({
   projectId: 'realize-360',
-  keyFilename: '/app/keyfile.json',
+  keyFilename: keyfile,
 });
 
 const TESTMODE = true;

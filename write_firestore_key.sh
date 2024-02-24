@@ -1,4 +1,2 @@
 #!/bin/sh
-FIRESTORE_JSON=$FIRESTORE_AUTH
-
-echo "$FIRESTORE_JSON" > /app/keyfile.json
+echo "$FIRESTORE_AUTH" > /app/keyfile.json
