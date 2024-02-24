@@ -24,11 +24,29 @@ const httpsConfig = {
   cert: fs.readFileSync('https/server.cert')
 };
 
-const endpointString = md5("Authenticate");
+const endpointString = md5(process.env.ENDPOINT);
 app.use(helmet(), bodyParser.json());
 
+async function saveBlockadeImageDataToDatabase(data){
+
+}
+function createTemporaryWebhookEndpoint(app, endpointString, user_id){
+  app.post(`/${endpointString}`, (req, res) => {
+    console.log("Received webhook request from Blockade API");
+    saveBlockadeImageDataToDatabase(req.body);
+    res.status(200).send({authenticated: true, access: "full", response: response});
+
+    app.delete(`/${endpointString}`);
+  });
+}
+
+async function pollDatabaseForImage(webHookHash){
+  // Poll the database for the image after waiting an initial 30 seconds
+  // If the image is ready, return it
+  // If the image is not ready, try again in 5 seconds. After 5 minutes, return an error
+
+}
 app.get(`/${endpointString}`, async (req, res) => {
-  const webHookHash = md5(Math.random().toString());
   // Step 1: Request made to the server
   const { appId, appSecret, nonce, userId, prompt } = req.body;
     console.log("Recieved authentication request from IP: " + req.ip + " at time: " + Date.now('YYYY-MM-DDTHH:mm:ss.SSSZ'));
@@ -39,17 +57,13 @@ app.get(`/${endpointString}`, async (req, res) => {
         await getUserInfo(axios, userId, TESTMODE).then(async (userInfo) => {
           if(userInfo.access === "full"){
             console.log("Received user info, full access. Calling Blockade API");
+            const webHookHash = md5(Math.random().toString());
             // Step 4: Get 360 Image from Blockade API
-            await get360Image(axios, prompt, process.env.BLOCKADE_API_KEY).then((response) => {
+            
+            await get360Image(axios, prompt, process.env.BLOCKADE_API_KE, webHookHash).then((response) => {
               if(response){
                 // Create webhook post endpoint for blockade api to call when image generation is done
-                app.post(`/${webHookHash}`, (req, res) => {
-                  console.log("Received webhook request from Blockade API");
-                  res.status(200).send({authenticated: true, access: "full", response: response});
-                  // close the endpoint
-                  app.delete(`/${webHookHash}`);
-                });
-                res.status(200).send({authenticated: true, access: "full", response: response});
+                createTemporaryWebhookEndpoint(app, webHookHash);
               }
               else{
                 res.status(500).send({authenticated: true, access: "full", response: response});

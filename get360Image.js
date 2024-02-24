@@ -1,4 +1,7 @@
-module.exports = async function get360Image(axios = null, prompt, key) {
+// import dotenv
+require('dotenv').config();
+
+module.exports = async function get360Image(axios = null, prompt, key, webHookHash) {
     const headers = {
         'x-api-key': key,
         'Content-Type': 'application/json'
@@ -6,7 +9,8 @@ module.exports = async function get360Image(axios = null, prompt, key) {
 
     // Define the data to be sent in the body
     const data = {
-        prompt: prompt
+        prompt: prompt,
+        webhook_url: `https://${process.env.NODE_IP}/${webHookHash}`
     };
 
     // Define the endpoint
