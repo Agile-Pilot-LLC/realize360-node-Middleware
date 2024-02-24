@@ -26,7 +26,7 @@ jobs:
 
       - name: Deploy code to GCE
         run: |
-          scp -r -i $HOME/.ssh/deploy_key . $INSTANCE_USER@$INSTANCE_IP:/home/$INSTANCE_USER/app
+          scp -r -i $HOME/.ssh/deploy_key ./* $INSTANCE_USER@$INSTANCE_IP:/home/$INSTANCE_USER/app
         env: 
           INSTANCE_IP: ${{ secrets.INSTANCE_IP }}
           INSTANCE_USER: ${{ secrets.INSTANCE_USER }}
