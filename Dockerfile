@@ -14,4 +14,4 @@
  COPY . .
 
  # Start the application
- CMD ["npm run start"]
+ CMD ["npm", "start"]
