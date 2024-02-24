@@ -11,7 +11,7 @@ module.exports = async function get360Image(axios = null, prompt, genReceiveEndp
     const testHook = "https://webhook.site/663183ac-b5e6-4174-bdd4-6a292e14adcc";
     const data = {
         prompt: prompt,
-        webhook_url: `https://realizeapi.agilepilot.co/${genReceiveEndpoint}?g=${webHookHash}`
+        webhook_url: `https://realize.agilepilot.co/${genReceiveEndpoint}?g=${webHookHash}`
     };
     const testData = {
         prompt: "mountain range in alaska with northern lights",
