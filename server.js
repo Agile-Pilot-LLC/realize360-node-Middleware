@@ -6,6 +6,10 @@ const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const md5 = require('md5');
 const axios = require('axios');
+const http = require('http');
+
+const hostname = '0.0.0.0'
+const port = process.env.PORT || 3000;
 
 const TESTMODE = true;
 
@@ -77,8 +81,13 @@ app.get(`/${endpointString}`, async (req, res) => {
 
 });
 
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+const server = http.createServer(app);
 // create an HTTP server
-app.listen(80, () => {
+server.listen(port, hostname, () => {
   console.log('Server started on http://localhost:80');
   console.log('Endpoint: ' + endpointString);
 });
