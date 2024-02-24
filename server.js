@@ -4,8 +4,6 @@ const express = require('express');
 const app = express();
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
-const fs = require('fs');
-const https = require('https');
 const md5 = require('md5');
 const axios = require('axios');
 
@@ -18,11 +16,6 @@ const get360ImagePath = './get360Image.js';
 const authenticateUser = require(authenticatorPath);
 const getUserInfo = require(getUserInfoPath);
 const get360Image = require(get360ImagePath);
-
-const httpsConfig = {
-  key: fs.readFileSync('https/server.key'),
-  cert: fs.readFileSync('https/server.cert')
-};
 
 const endpointString = md5(process.env.ENDPOINT);
 app.use(helmet(), bodyParser.json());
@@ -84,12 +77,9 @@ app.get(`/${endpointString}`, async (req, res) => {
 
 });
 
-// Path: server.js
-// create a server object and listen on the port 443
-const server = https.createServer(httpsConfig, app);
-
-server.listen(443, () => {
-  console.log('Server started on https://localhost:443');
+// create an HTTP server
+app.listen(80, () => {
+  console.log('Server started on http://localhost:80');
   console.log('Endpoint: ' + endpointString);
 });
 
