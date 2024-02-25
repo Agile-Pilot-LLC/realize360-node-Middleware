@@ -33,18 +33,14 @@ app.post(`/${sendGenerationString}`, async (req, res) => {
   else {
     let uuidExists = await db.checkIfUuidExists(generationUuid);
     if (uuidExists) {
-      // let body = req.body;
-      // let status = null;
-      // if(body.status){
-      //   status = body.status;
-      // }
-      // console.log(`Webhook Hit by Blockade API, status "${status} for generation ID: ${generationUuid}`);
-      console.log(req.body);
+      let body = req.body;
+      let status = body.status;
+      console.log(`Webhook Hit by Blockade API, status "${status} for generation ID: ${generationUuid}`);
       res.status(200).send("Received Request:) - Thanks Blockade!");
 
-      // if (status == "completed") {
-      //   await awaitdb.saveBlockadeData(uuid, body);
-      // }
+      if (status == "completed") {
+        await awaitdb.saveBlockadeData(uuid, body);
+      }
     }
     else {
       failRequest(res, 400, { error: "Failed." });
