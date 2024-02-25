@@ -22,7 +22,7 @@ module.exports = async function get360Image(axios = null, prompt, generationUuid
     axios.post(endpoint, data, { headers })
         .then(response => {
             responseResult = true;
-            console.log("Blockade API Success: " + response.message);
+            console.log(`Blockade API Request Success for Generation ${generationUuid}`);
         })
         .catch(error => {
             console.error('Error:', error);
