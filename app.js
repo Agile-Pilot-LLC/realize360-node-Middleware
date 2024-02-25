@@ -16,6 +16,7 @@ const get360Image = require('./get360Image.js');
 const failRequest = require('./utils/failRequest.js');
 const validateBlockadeHeaders = require('./utils/validateBlockadeHeaders.js');
 const validateUuid = require('./utils/validateUuid.js');
+const isAuthorized = require('./utils/isAuthorized.js');
 
 // Variables
 const endpointString = md5(process.env.ENDPOINT);
@@ -113,20 +114,21 @@ app.get(`/${endpointString}`, async (req, res) => {
   await authenticateUser(axios, appId, appSecret, nonce, userId, TESTMODE).then(async (result) => {
     if (result) {
       // Step 3: Get user info/access permissions from Realize Database
-      await db.getUserData(userId, TESTMODE).then(async (userInfo) => {
-        if (userInfo.access === "full") {
-          console.log("Received user info, full access. Calling Blockade API");
-          const generationUuid = uuidv4();
-          await db.storeUuid(generationUuid, userId, prompt);
-          // Step 4: Get 360 Image from Blockade API
-          await get360Image(axios, prompt, generationUuid).then(() => {
-            res.status(200).send({ authenticated: true, access: "full", generationId: generationUuid});
-          });
-        }
-        else {
-          failRequest(res);
-        }
-      })
+      let authorized = await isAuthorized(db, userId, TESTMODE);
+
+      if (authorized) {
+        // Step 4: Get 360 Image from Blockade API
+        console.log("Received user info, full access. Calling Blockade API");
+        const generationUuid = uuidv4();
+        await db.storeUuid(generationUuid, userId, prompt);
+        
+        await get360Image(axios, prompt, generationUuid).then(() => {
+          res.status(200).send({ authenticated: true, access: "full", generationId: generationUuid});
+        });
+      }
+      else {
+        failRequest(res);
+      }
     }
     else {
       failRequest(res);
