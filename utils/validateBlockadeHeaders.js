@@ -8,6 +8,7 @@ function validateBlockadeHeaders(headers){
     return true;
   }
   else{
+    console.log("Received Invalid Headers: " + JSON.stringify(headers));
     return false;
   }
 }

@@ -3,6 +3,7 @@ function validateUuid(uuid){
     return true;
   }
   else{
+    console.log("Received Invalid UUID: " + uuid);
     return false;
   }
 }
