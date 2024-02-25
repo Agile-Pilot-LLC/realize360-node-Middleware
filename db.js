@@ -1,19 +1,19 @@
 const { Firestore } = require('@google-cloud/firestore');
 
 const serviceAccount = JSON.parse(process.env.FIRESTORE_AUTH);
-const generationDatabaseName = "generations";
-const userDatabaseName = "users";
 const db = new Firestore({
   projectId: 'realize-360',
   databaseId: 'realize-db',
   credentials: serviceAccount
 });
 
+const generationDatabaseName = "generations";
+const userDatabaseName = "users";
 const generationCollection = db.collection(generationDatabaseName);
 const userCollection = db.collection(userDatabaseName);
 
 async function saveBlockadeData(uuid, data){
-  generationCollection.doc(uuid).set(data);
+  await generationCollection.doc(uuid).set(data);
 }
 
 
@@ -26,14 +26,14 @@ async function pollDatabaseForImage(uuid){
 
 async function storeUuid(uuid){
   // store an object with webhook hash as key and no values
-  generationCollection.doc(uuid).set({}).then(() => {
+  await generationCollection.doc(uuid).set({}).then(() => {
     console.log(`Stored UUID "${uuid}" in "${generationDatabaseName}" collection.`);
   });
 }
 async function checkIfUuidExists(uuid){
   // check if the webhook hash exists in the database
   console.log(`Checking if UUID "${uuid}" exists in "${generationDatabaseName}" collection.`)
-  generationCollection.doc(uuid).get().then((doc) => {
+  await generationCollection.doc(uuid).get().then((doc) => {
     if(doc.exists){
       console.log(`UUID "${uuid}" exists in "${generationDatabaseName}" collection.`);
       return true;

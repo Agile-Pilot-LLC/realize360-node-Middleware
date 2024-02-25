@@ -18,20 +18,20 @@ function failRequest(res, statusCode = 401, response = {authenticated: false}){
   res.status(statusCode).send(response);
 }
 
-app.post(`/${sendGenerationString}`, (req, res) => {
+app.post(`/${sendGenerationString}`, async (req, res) => {
   let generationUuid = req.query.g;
 
   if(!generationUuid){
     failRequest(res, 400, {error: "Failed."});
   }
   else{
-    db.checkIfUuidExists(generationUuid).then((result) => {
+    db.checkIfUuidExists(generationUuid).then(async (result) => {
       if(result){
         let body = req.body;
         let status = body.status;
         
         if(status == "completed"){
-          db.saveBlockadeData(uuid, body);
+         await awaitdb.saveBlockadeData(uuid, body);
         }
         
         console.log(`Webhook Hit by Blockade API, status "${status} for generation ID: ${generationUuid}`);
@@ -65,11 +65,12 @@ app.get(`/${endpointString}`, async (req, res) => {
           const generationUuid = uuidv4();
 
           // Step 4: Get 360 Image from Blockade API
-          await get360Image(axios, prompt, generationUuid).then((response) => {
+          await get360Image(axios, prompt, generationUuid).then(async (response) => {
             if(response){
               //Step 5: Create webhook post endpoint for blockade api to call when image generation is done
               console.log('Received response from Blockade API, polling DB for image');
-              db.storeUuid(generationUuid);
+              await db.storeUuid(generationUuid);
+              res.status(200).send({authenticated: true, access: "full", response: response});
 
               // Step 6: Poll the database for the image after waiting an initial 30 seconds
             }
