@@ -120,7 +120,7 @@ app.get(`/${endpointString}`, async (req, res) => {
           await db.storeUuid(generationUuid, userId, prompt);
           // Step 4: Get 360 Image from Blockade API
           await get360Image(axios, prompt, generationUuid).then(() => {
-            res.status(200).send({ authenticated: true, access: "full", response: response, generationId: generationUuid});
+            res.status(200).send({ authenticated: true, access: "full", generationId: generationUuid});
           });
         }
         else {
