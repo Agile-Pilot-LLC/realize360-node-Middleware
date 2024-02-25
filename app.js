@@ -12,7 +12,6 @@ const { v4: uuidv4 } = require('uuid');
 // Custom Dependencies
 const db = require('./db.js');
 const authenticateUser = require('./authenticate.js');
-const getUserInfo = require('./getUserInfo.js');
 const get360Image = require('./get360Image.js');
 const failRequest = require('./utils/failRequest.js');
 const validateBlockadeHeaders = require('./utils/validateBlockadeHeaders.js');
@@ -21,14 +20,48 @@ const validateUuid = require('./utils/validateUuid.js');
 // Variables
 const endpointString = md5(process.env.ENDPOINT);
 const sendGenerationString = md5(process.env.SEND_GENERATION);
+const checkDbString = md5(process.env.CHECK_DB);
 
 const TESTMODE = true;
+app.get(`/userInfo`, async (req, res) => {
+  const userId = req.query.userId;
+  if(!userId){
+    failRequest(res, 404);
+  }
+  else {
+    await db.getUserData(userId).then((userInfo) => {
+      if (userInfo) {
+        res.status(200).send(userInfo);
+      }
+      else {
+        failRequest(res, 400, { message: "User not found." });
+      }
+    })
+  }
+});
+app.get(`/${checkDbString}`, async (req, res) => {
+  const generationUuid = req.query.g;
+  const checkDbKey = req.query.k;
 
+  if(!validateUuid(generationUuid) || checkDbKey != process.env.CHECK_DB_KEY){
+    console.log("Invalid key or uuid used in checkDb request.")
+    failRequest(res, 404);
+  }
+  else {
+    let generationData = await db.getGeneration(generationUuid);
+    if (generationData) {
+      res.status(200).send(generationData);
+    }
+    else {
+      failRequest(res, 400, { message: "Generation not found." });
+    }
+  }
+});
 
 app.post(`/${sendGenerationString}`, async (req, res) => {
   const generationUuid = req.query.g;
   if(!validateBlockadeHeaders(req.headers) || !validateUuid(generationUuid)){
-    failRequest(res, 400, { error: "Failed." });
+    failRequest(res, 404);
   }
   else {
     let uuidExists = await db.checkIfUuidExists(generationUuid);
@@ -43,7 +76,7 @@ app.post(`/${sendGenerationString}`, async (req, res) => {
       res.status(200).send("Received Request:) - Thanks Blockade!");
     }
     else {
-      failRequest(res, 400, { error: "Failed." });
+      failRequest(res, 404);
     }
   }
 });
@@ -63,7 +96,7 @@ app.get(`/${endpointString}`, async (req, res) => {
   await authenticateUser(axios, appId, appSecret, nonce, userId, TESTMODE).then(async (result) => {
     if (result) {
       // Step 3: Get user info/access permissions from Realize Database
-      await getUserInfo(axios, userId, TESTMODE).then(async (userInfo) => {
+      await db.getUserData(userId, TESTMODE).then(async (userInfo) => {
         if (userInfo.access === "full") {
           console.log("Received user info, full access. Calling Blockade API");
           const generationUuid = uuidv4();
@@ -72,14 +105,12 @@ app.get(`/${endpointString}`, async (req, res) => {
           await get360Image(axios, prompt, generationUuid).then(async (response) => {
             if (response) {
               //Step 5: Create webhook post endpoint for blockade api to call when image generation is done
-              console.log('Received response from Blockade API, polling DB for image');
-
-              res.status(200).send({ authenticated: true, access: "full", response: response });
+              res.status(200).send({ authenticated: true, access: "full", response: response, generationId: generationUuid});
 
               // Step 6: Poll the database for the image after waiting an initial 30 seconds
             }
             else {
-              failRequest(res, 500, { authenticated: true, access: "full", response: response });
+              failRequest(res, 500, { authenticated: true, access: "full", status: "failed" });
             }
           })
         }

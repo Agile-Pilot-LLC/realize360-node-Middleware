@@ -18,11 +18,17 @@ async function saveBlockadeData(uuid, data){
 }
 
 
-async function pollDatabaseForImage(uuid){
-  // Poll the database for the image after waiting an initial 30 seconds
-  // If the image is ready, return it
-  // If the image is not ready, try again in 5 seconds. After 5 minutes, return an error
-
+async function getGeneration(uuid){
+  let generation = false;
+  await generationCollection.doc(uuid).get().then((doc) => {
+    if(doc.exists){
+      generation = doc.data();
+    }
+    else{
+      console.log(`No generation found for UUID "${uuid}" in "${generationDatabaseName}" collection.`);
+    }
+  });
+  return generation;
 }
 
 async function storeUuid(uuid){
@@ -47,9 +53,30 @@ async function checkIfUuidExists(uuid){
   return result;
 }
 
+async function getUserData(userId, testmode = false){
+  if(testmode){
+    return {
+        id: userId,
+        access: "full",
+    }
+  };
+  let user = false;
+  await userCollection.doc(userId).get().then((doc) => {
+    if(doc.exists){
+      user = doc.data();
+    }
+    else{
+      // add user to database
+      console.log(`User "${userId}" does not exist in "${userDatabaseName}" collection.`);
+    }
+  });
+  return user;
+}
+
 module.exports = {
   saveBlockadeData,
-  pollDatabaseForImage,
+  getGeneration,
   storeUuid,
-  checkIfUuidExists
+  checkIfUuidExists,
+  getUserData
 };
