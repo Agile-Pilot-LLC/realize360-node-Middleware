@@ -1,44 +1,25 @@
+// NPM Dependencies
 require('dotenv').config();
 const express = require('express');
 const app = express();
 const md5 = require('md5');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
+
+// Custom Dependencies
 const db = require('./db.js');
 const authenticateUser = require('./authenticate.js');
 const getUserInfo = require('./getUserInfo.js');
 const get360Image = require('./get360Image.js');
+const failRequest = require('./utils/failRequest.js');
+const validateBlockadeHeaders = require('./utils/validateBlockadeHeaders.js');
+const validateUuid = require('./utils/validateUuid.js');
 
+// Variables
 const endpointString = md5(process.env.ENDPOINT);
 const sendGenerationString = md5(process.env.SEND_GENERATION);
 
 const TESTMODE = true;
-
-function failRequest(res, statusCode = 401, response = { authenticated: false }) {
-  res.status(statusCode).send(response);
-}
-function validateBlockadeHeaders(headers){
-  const {
-    'content-type': contentType,
-    'user-agent': userAgent,
-  } = headers;
-
-  if(contentType === 'application/json' && userAgent === 'GuzzleHttp/7'){
-    return true;
-  }
-  else{
-    return false;
-  }
-}
-
-function validateUuid(uuid){
-  if(uuid.length === 36){
-    return true;
-  }
-  else{
-    return false;
-  }
-}
 
 app.post(`/${sendGenerationString}`, async (req, res) => {
   const generationUuid = req.query.g;
