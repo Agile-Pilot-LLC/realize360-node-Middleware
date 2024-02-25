@@ -1,34 +1,18 @@
 require('dotenv').config();
-// instantiate an express server on HTTPS, use helmet to secure the server, and use the body-parser middleware to parse incoming requests.
 const express = require('express');
 const app = express();
 const md5 = require('md5');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const db = require('./db.js');
-
-// write process.env.FIRESTORE_AUTH to a file in the root directory of the project.
-
-
-// take /app/keyfile.json and parse it into an object
-
-
-const TESTMODE = true;
-
-const authenticatorPath = './authenticate.js';
-const getUserInfoPath = './getUserInfo.js';
-const get360ImagePath = './get360Image.js';
-
-const authenticateUser = require(authenticatorPath);
-const getUserInfo = require(getUserInfoPath);
-const get360Image = require(get360ImagePath);
+const authenticateUser = require('./authenticate.js');
+const getUserInfo = require('./getUserInfo.js');
+const get360Image = require('./get360Image.js');
 
 const endpointString = md5(process.env.ENDPOINT);
 const sendGenerationString = md5(process.env.SEND_GENERATION);
 
-
-
-
+const TESTMODE = true;
 
 function failRequest(res, statusCode = 401, response = {authenticated: false}){
   res.status(statusCode).send(response);
@@ -79,13 +63,15 @@ app.get(`/${endpointString}`, async (req, res) => {
         if(userInfo.access === "full"){
           console.log("Received user info, full access. Calling Blockade API");
           const generationUuid = uuidv4();
+
           // Step 4: Get 360 Image from Blockade API
-          
           await get360Image(axios, prompt, generationUuid).then((response) => {
             if(response){
-              // Create webhook post endpoint for blockade api to call when image generation is done
+              //Step 5: Create webhook post endpoint for blockade api to call when image generation is done
               console.log('Received response from Blockade API, polling DB for image');
               db.storeUuid(generationUuid);
+
+              // Step 6: Poll the database for the image after waiting an initial 30 seconds
             }
             else{
               failRequest(res, 500, {authenticated: true, access: "full", response: response});
