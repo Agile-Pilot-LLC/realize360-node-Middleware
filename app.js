@@ -23,6 +23,23 @@ const sendGenerationString = md5(process.env.SEND_GENERATION);
 const checkDbString = md5(process.env.CHECK_DB);
 
 const TESTMODE = true;
+app.get('/testMetaAuthentication', async (req, res) => {
+
+  const { appId, appSecret, nonce, userId, prompt } = req.query;
+  if (!appId || !appSecret || !nonce || !userId || !prompt) {
+    failRequest(res);
+  }
+  else {
+    await authenticateUser(axios, appId, appSecret, nonce, userId).then(async (result) => {
+      if (result) {
+        res.status(200).send("Authenticated!");
+      }
+      else {
+        failRequest(res);
+      }
+    })
+  }
+});
 app.get(`/userInfo`, async (req, res) => {
   const userId = req.query.userId;
   if(!userId){
