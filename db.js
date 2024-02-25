@@ -34,8 +34,7 @@ async function getGeneration(uuid){
 async function storeUuid(uuid, userId, prompt){
   // store an object with webhook hash as key and no values
   await generationCollection.doc(uuid).set({
-    userId: userId,
-    prompt: prompt
+    metaUserId: userId,
   }).then(() => {
     console.log(`Stored UUID "${uuid}" in "${generationDatabaseName}" collection.`);
   });
