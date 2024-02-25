@@ -2,6 +2,9 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const helmet = require('helmet');
+const bodyParser = require('body-parser');
+app.use(helmet(), bodyParser.json());
 const md5 = require('md5');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
@@ -21,6 +24,7 @@ const sendGenerationString = md5(process.env.SEND_GENERATION);
 
 const TESTMODE = true;
 
+
 app.post(`/${sendGenerationString}`, async (req, res) => {
   const generationUuid = req.query.g;
   if(!validateBlockadeHeaders(req.headers) || !validateUuid(generationUuid)){
@@ -35,8 +39,7 @@ app.post(`/${sendGenerationString}`, async (req, res) => {
       //   status = body.status;
       // }
       // console.log(`Webhook Hit by Blockade API, status "${status} for generation ID: ${generationUuid}`);
-      console.log(req);
-
+      console.log(req.body);
       res.status(200).send("Received Request:) - Thanks Blockade!");
 
       // if (status == "completed") {
