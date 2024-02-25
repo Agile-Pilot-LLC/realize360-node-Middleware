@@ -8,7 +8,7 @@ module.exports = async function get360Image(axios = null, prompt, generationUuid
         'Content-Type': 'application/json'
     };
     const genReceiveEndpoint = md5(process.env.SEND_GENERATION);
-    
+
     // Define the data to be sent in the body
     const data = {
         prompt: prompt,
@@ -21,7 +21,7 @@ module.exports = async function get360Image(axios = null, prompt, generationUuid
     // Perform the POST request using Axios
     axios.post(endpoint, data, { headers })
         .then(response => {
-            responseResult = response;
+            responseResult = true;
             console.log("Blockade API Success: " + response.message);
         })
         .catch(error => {
