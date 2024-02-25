@@ -37,7 +37,7 @@ app.post(`/${sendGenerationString}`, async (req, res) => {
       let status = body.status;
       console.log(`Webhook Hit by Blockade API, status "${status} for generation ID: ${generationUuid}`);
   
-      if (status == "completed") {
+      if (status == "complete") {
         await db.saveBlockadeData(uuid, body);
       }
       res.status(200).send("Received Request:) - Thanks Blockade!");
