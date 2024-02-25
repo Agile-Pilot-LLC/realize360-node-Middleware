@@ -119,17 +119,9 @@ app.get(`/${endpointString}`, async (req, res) => {
           const generationUuid = uuidv4();
           await db.storeUuid(generationUuid, userId, prompt);
           // Step 4: Get 360 Image from Blockade API
-          await get360Image(axios, prompt, generationUuid).then(async (response) => {
-            if (response) {
-              //Step 5: Create webhook post endpoint for blockade api to call when image generation is done
-              res.status(200).send({ authenticated: true, access: "full", response: response, generationId: generationUuid});
-
-              // Step 6: Poll the database for the image after waiting an initial 30 seconds
-            }
-            else {
-              failRequest(res, 500, { authenticated: true, access: "full", status: "failed" });
-            }
-          })
+          await get360Image(axios, prompt, generationUuid).then(() => {
+            res.status(200).send({ authenticated: true, access: "full", response: response, generationId: generationUuid});
+          });
         }
         else {
           failRequest(res);
