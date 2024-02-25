@@ -14,6 +14,7 @@ const userCollection = db.collection(userDatabaseName);
 
 async function saveBlockadeData(uuid, data){
   await generationCollection.doc(uuid).set(data);
+  console.log(`Saved Blockade Data for UUID "${uuid}" in "${generationDatabaseName}" collection.`);
 }
 
 
