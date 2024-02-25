@@ -13,7 +13,7 @@ const generationCollection = db.collection(generationDatabaseName);
 const userCollection = db.collection(userDatabaseName);
 
 async function saveBlockadeData(uuid, data){
-  await generationCollection.doc(uuid).set(data);
+  await generationCollection.doc(uuid).set(data, { merge: true });
   console.log(`Saved Blockade Data for UUID "${uuid}" in "${generationDatabaseName}" collection.`);
 }
 
@@ -31,9 +31,12 @@ async function getGeneration(uuid){
   return generation;
 }
 
-async function storeUuid(uuid){
+async function storeUuid(uuid, userId, prompt){
   // store an object with webhook hash as key and no values
-  await generationCollection.doc(uuid).set({}).then(() => {
+  await generationCollection.doc(uuid).set({
+    userId: userId,
+    prompt: prompt
+  }).then(() => {
     console.log(`Stored UUID "${uuid}" in "${generationDatabaseName}" collection.`);
   });
 }
