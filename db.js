@@ -33,16 +33,17 @@ async function storeUuid(uuid){
 async function checkIfUuidExists(uuid){
   // check if the webhook hash exists in the database
   console.log(`Checking if UUID "${uuid}" exists in "${generationDatabaseName}" collection.`)
+  let result = false;
   await generationCollection.doc(uuid).get().then((doc) => {
     if(doc.exists){
       console.log(`UUID "${uuid}" exists in "${generationDatabaseName}" collection.`);
-      return true;
+      result = true;
     }
     else{
       console.log(`UUID "${uuid}" does not exist in "${generationDatabaseName}" collection.`);
-      return false;
     }
   });
+  return result;
 }
 
 module.exports = {
