@@ -63,13 +63,13 @@ app.get(`/${endpointString}`, async (req, res) => {
         if(userInfo.access === "full"){
           console.log("Received user info, full access. Calling Blockade API");
           const generationUuid = uuidv4();
-
+          await db.storeUuid(generationUuid);
           // Step 4: Get 360 Image from Blockade API
           await get360Image(axios, prompt, generationUuid).then(async (response) => {
             if(response){
               //Step 5: Create webhook post endpoint for blockade api to call when image generation is done
               console.log('Received response from Blockade API, polling DB for image');
-              await db.storeUuid(generationUuid);
+              
               res.status(200).send({authenticated: true, access: "full", response: response});
 
               // Step 6: Poll the database for the image after waiting an initial 30 seconds
