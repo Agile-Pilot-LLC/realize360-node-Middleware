@@ -1,4 +1,4 @@
-module.exports = async function isAuthorized(db, userId, testmode = false) {
+async function isAuthorized(db, userId, testmode = false) {
   if(testmode){
     return true;
   }
@@ -18,3 +18,5 @@ module.exports = async function isAuthorized(db, userId, testmode = false) {
     return false;
   }
 };
+
+module.exports = isAuthorized;
