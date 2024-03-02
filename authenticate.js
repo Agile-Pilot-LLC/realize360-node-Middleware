@@ -15,6 +15,6 @@ module.exports = async function authenticateUser(axios = null, nonce, userId, te
         nonce: nonce,
         user_id: userId
     });
-    
-    console.log(response.body);
+
+    console.log(response.data);
 }
