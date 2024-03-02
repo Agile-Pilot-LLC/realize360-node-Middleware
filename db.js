@@ -17,7 +17,14 @@ async function saveBlockadeData(uuid, data){
   console.log(`Saved Blockade Data for UUID "${uuid}" in "${generationDatabaseName}" collection.`);
 }
 
-
+async function addUser(userId){
+  // add new entry to users collection
+  await userCollection.doc(userId).set({
+    meta_id: userId
+  });
+  console.log(`Added user "${userId}" to "${userDatabaseName}" collection.`);
+}
+  
 async function getGeneration(uuid){
   let generation = false;
   await generationCollection.doc(uuid).get().then((doc) => {
@@ -36,7 +43,7 @@ async function storeUuid(uuid, userId, prompt, TESTMODE){
   if(TESTMODE){
     return;
   }
-  
+
   await generationCollection.doc(uuid).set({
     metaUserId: userId,
   }).then(() => {

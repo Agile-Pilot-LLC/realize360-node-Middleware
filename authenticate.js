@@ -1,4 +1,6 @@
 // Define the function to authenticate the user
+const addNewUser = require('./utils/addNewUser.js');
+
 module.exports = async function authenticateUser(axios = null, nonce, userId, testmode = false) {
     // Define the access token (replace $APP_ID and $APP_SECRET with your actual values)
     if(testmode){
@@ -19,6 +21,7 @@ module.exports = async function authenticateUser(axios = null, nonce, userId, te
     let result = response.data;
     
     if(result.is_valid){
+        await addNewUser(userId, testmode);
         return true;
     }
     else{

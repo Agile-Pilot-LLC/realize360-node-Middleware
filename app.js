@@ -16,7 +16,6 @@ const get360Image = require('./get360Image.js');
 const failRequest = require('./utils/failRequest.js');
 const validateBlockadeHeaders = require('./utils/validateBlockadeHeaders.js');
 const validateUuid = require('./utils/validateUuid.js');
-const isAuthorized = require('./utils/isAuthorized.js');
 
 // Variables
 const endpointString = md5(process.env.ENDPOINT);
@@ -113,28 +112,19 @@ app.get(`/${endpointString}`, async (req, res) => {
   // Step 2: Authenticate the user via Oculus API
   await authenticateUser(axios, nonce, userId).then(async (result) => {
     if (result) {
-      // Step 3: Get user info/access permissions from Realize Database
-      let authorized = await isAuthorized(db, userId, TESTMODE);
-
-      if (authorized) {
-        // Step 4: Get 360 Image from Blockade API
-        console.log("Received user info, full access. Calling Blockade API");
-        const generationUuid = uuidv4();
-        await db.storeUuid(generationUuid, userId, prompt, TESTMODE);
-        
-        await get360Image(axios, prompt, generationUuid, TESTMODE).then(() => {
-          if (TESTMODE){
-            console.log("Sent User TEST Response")
-            res.status(200).send({ authenticated: true, access: "full", generationId: "c52c73e3-4b9d-475b-863c-d2a10f8cb6b1"});
-          }
-          else{
-            res.status(200).send({ authenticated: true, access: "full", generationId: generationUuid});
-          }
-        });
-      }
-      else {
-        failRequest(res);
-      }
+      console.log("Received user info, full access. Calling Blockade API");
+      const generationUuid = uuidv4();
+      await db.storeUuid(generationUuid, userId, prompt, TESTMODE);
+      
+      await get360Image(axios, prompt, generationUuid, TESTMODE).then(() => {
+        if (TESTMODE){
+          console.log("Sent User TEST Response")
+          res.status(200).send({ authenticated: true, access: "full", generationId: "c52c73e3-4b9d-475b-863c-d2a10f8cb6b1"});
+        }
+        else{
+          res.status(200).send({ authenticated: true, access: "full", generationId: generationUuid});
+        }
+      });
     }
     else {
       failRequest(res);
