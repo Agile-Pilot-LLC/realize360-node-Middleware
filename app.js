@@ -23,7 +23,7 @@ const endpointString = md5(process.env.ENDPOINT);
 const sendGenerationString = md5(process.env.SEND_GENERATION);
 const checkDbString = md5(process.env.CHECK_DB);
 
-const TESTMODE = true;
+const TESTMODE = false;
 app.get('/testMetaAuthentication', async (req, res) => {
 
   const { nonce, userId, } = req.query;
