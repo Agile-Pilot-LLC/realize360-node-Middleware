@@ -1,11 +1,13 @@
 // Define the function to authenticate the user
-module.exports = async function AuthenticateUser(axios = null, appId, appSecret, nonce, userId, testmode = false) {
+module.exports = async function AuthenticateUser(axios = null, nonce, userId, testmode = false) {
     // Define the access token (replace $APP_ID and $APP_SECRET with your actual values)
     if(testmode){
         return true;
     }
+    const appId = process.env.APP_ID;
+    const appSecret = process.env.APP_SECRET;
+    
     const accessToken = `OC|${appId}|${appSecret}`;
-
     // Define the data to be sent in the POST request
     const postData = {
         access_token: accessToken,

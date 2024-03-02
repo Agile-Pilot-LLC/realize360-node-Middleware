@@ -101,9 +101,9 @@ app.post(`/${sendGenerationString}`, async (req, res) => {
 
 app.get(`/${endpointString}`, async (req, res) => {
   // Step 1: Request made to the server
-  const { appId, appSecret, nonce, userId, prompt } = req.query;
+  const { n: nonce, u: userId, p: prompt } = req.query;
 
-  if (!appId || !appSecret || !nonce || !userId || !prompt) {
+  if (!nonce || !userId || !prompt) {
     failRequest(res);
   }
 
@@ -111,7 +111,7 @@ app.get(`/${endpointString}`, async (req, res) => {
   console.log("Recieved authentication request from IP: " + req.ip + " at time: " + Date.now('YYYY-MM-DDTHH:mm:ss.SSSZ'));
 
   // Step 2: Authenticate the user via Oculus API
-  await authenticateUser(axios, appId, appSecret, nonce, userId, TESTMODE).then(async (result) => {
+  await authenticateUser(axios, nonce, userId, TESTMODE).then(async (result) => {
     if (result) {
       // Step 3: Get user info/access permissions from Realize Database
       let authorized = await isAuthorized(db, userId, TESTMODE);
