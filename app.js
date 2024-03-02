@@ -122,8 +122,13 @@ app.get(`/${endpointString}`, async (req, res) => {
         const generationUuid = uuidv4();
         await db.storeUuid(generationUuid, userId, prompt);
         
-        await get360Image(axios, prompt, generationUuid).then(() => {
-          res.status(200).send({ authenticated: true, access: "full", generationId: generationUuid});
+        await get360Image(axios, prompt, generationUuid, TESTMODE).then(() => {
+          if (TESTMODE){
+            res.status(200).send({ authenticated: true, access: "full", generationId: "c52c73e3-4b9d-475b-863c-d2a10f8cb6b1"});
+          }
+          else{
+            res.status(200).send({ authenticated: true, access: "full", generationId: generationUuid});
+          }
         });
       }
       else {

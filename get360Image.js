@@ -2,7 +2,10 @@
 require('dotenv').config();
 const md5 = require('md5');
 
-module.exports = async function get360Image(axios = null, prompt, generationUuid) {
+module.exports = async function get360Image(axios = null, prompt, generationUuid, testmode = false) {
+    if (testmode) {
+        return true;
+    }
     const headers = {
         'x-api-key': process.env.BLOCKADE_API_KEY,
         'Content-Type': 'application/json'

@@ -1,6 +1,10 @@
 # Local Test Commands
 
-curl https://realize.agilepilot.co/2fe1b096ed13e45b2bfb2751bf922cae\?appId=131\&appSecret=232\&nonce=123\&userId=123\&prompt=mountains
+# Mac Remote START GENERATION
+curl https://realize.agilepilot.co/2fe1b096ed13e45b2bfb2751bf922cae\?n=123\&u=123\&p=mountains
+
+# Windows Remote START GENERATION
+curl https://realize.agilepilot.co/2fe1b096ed13e45b2bfb2751bf922cae?n=123"&"u=123"&"p=mountains
 
 curl https://realize.agilepilot.co/
 
