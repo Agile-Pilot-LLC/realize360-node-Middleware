@@ -66,7 +66,7 @@ app.get(`/${checkDbString}`, async (req, res) => {
   }
   else {
     let generationData = await db.getGeneration(generationUuid);
-    if (generationData.image_url) {
+    if (generationData.file_url) {
       console.log("Image url found for generation ID: " + generationUuid);
       res.status(200).send(generationData);
     }
