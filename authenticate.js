@@ -16,5 +16,12 @@ module.exports = async function authenticateUser(axios = null, nonce, userId, te
         user_id: userId
     });
 
-    console.log(response.data);
+    let result = JSON.parse(response.data);
+    
+    if(result.is_valid){
+        return true;
+    }
+    else{
+        return false;
+    }
 }
