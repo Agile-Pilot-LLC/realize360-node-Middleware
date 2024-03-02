@@ -91,5 +91,6 @@ module.exports = {
   getGeneration,
   storeUuid,
   checkIfUuidExists,
-  getUserData
+  getUserData,
+  addUser
 };
