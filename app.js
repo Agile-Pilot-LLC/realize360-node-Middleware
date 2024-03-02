@@ -120,10 +120,11 @@ app.get(`/${endpointString}`, async (req, res) => {
         // Step 4: Get 360 Image from Blockade API
         console.log("Received user info, full access. Calling Blockade API");
         const generationUuid = uuidv4();
-        await db.storeUuid(generationUuid, userId, prompt);
+        await db.storeUuid(generationUuid, userId, promp, TESTMODE);
         
         await get360Image(axios, prompt, generationUuid, TESTMODE).then(() => {
           if (TESTMODE){
+            console.log("Sent User TEST Response")
             res.status(200).send({ authenticated: true, access: "full", generationId: "c52c73e3-4b9d-475b-863c-d2a10f8cb6b1"});
           }
           else{
