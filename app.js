@@ -111,7 +111,7 @@ app.get(`/${endpointString}`, async (req, res) => {
   console.log("Recieved authentication request from IP: " + req.ip + " at time: " + Date.now('YYYY-MM-DDTHH:mm:ss.SSSZ'));
 
   // Step 2: Authenticate the user via Oculus API
-  await authenticateUser(axios, nonce, userId, TESTMODE).then(async (result) => {
+  await authenticateUser(axios, nonce, userId).then(async (result) => {
     if (result) {
       // Step 3: Get user info/access permissions from Realize Database
       let authorized = await isAuthorized(db, userId, TESTMODE);

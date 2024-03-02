@@ -8,24 +8,13 @@ module.exports = async function authenticateUser(axios = null, nonce, userId, te
     const appSecret = process.env.APP_SECRET;
 
     const accessToken = `OC|${appId}|${appSecret}`;
-    // Define the data to be sent in the POST request
-    const postData = {
+    // Define the data to be sent in the POST request;
+
+    const response = await axios.post('https://graph.oculus.com/user_nonce_validate', {
         access_token: accessToken,
         nonce: nonce,
         user_id: userId
-    };
-
-    // Define the URL for the API endpoint
-    const url = 'https://graph.oculus.com/user_nonce_validate';
-    console.log("Sending request to Oculus API");
-    // Make a POST request to the API endpoint
-    try{
-        let response = await axios.post(url, postData);
-        console.log("Oculus API Response: " + response.body);
-        return true;
-    }
-    catch(err){
-        console.log("Oculups API Error: " + err.message);
-        return false;
-    }
+    });
+    
+    console.log(response.body);
 }
