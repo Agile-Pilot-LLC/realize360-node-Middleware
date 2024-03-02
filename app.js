@@ -26,12 +26,12 @@ const checkDbString = md5(process.env.CHECK_DB);
 const TESTMODE = true;
 app.get('/testMetaAuthentication', async (req, res) => {
 
-  const { appId, appSecret, nonce, userId, prompt } = req.query;
-  if (!appId || !appSecret || !nonce || !userId || !prompt) {
+  const { nonce, userId, } = req.query;
+  if (!nonce || !userId) {
     failRequest(res);
   }
   else {
-    await authenticateUser(axios, appId, appSecret, nonce, userId).then(async (result) => {
+    await authenticateUser(axios, nonce, userId).then(async (result) => {
       if (result) {
         res.status(200).send("Authenticated!");
       }

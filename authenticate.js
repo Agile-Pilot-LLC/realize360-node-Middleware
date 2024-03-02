@@ -1,12 +1,12 @@
 // Define the function to authenticate the user
-module.exports = async function AuthenticateUser(axios = null, nonce, userId, testmode = false) {
+module.exports = async function authenticateUser(axios = null, nonce, userId, testmode = false) {
     // Define the access token (replace $APP_ID and $APP_SECRET with your actual values)
     if(testmode){
         return true;
     }
     const appId = process.env.APP_ID;
     const appSecret = process.env.APP_SECRET;
-    
+
     const accessToken = `OC|${appId}|${appSecret}`;
     // Define the data to be sent in the POST request
     const postData = {
@@ -21,7 +21,7 @@ module.exports = async function AuthenticateUser(axios = null, nonce, userId, te
     // Make a POST request to the API endpoint
     try{
         let response = await axios.post(url, postData);
-        console.log("Oculus API Success: " + response.message);
+        console.log("Oculus API Response: " + response.body);
         return true;
     }
     catch(err){
