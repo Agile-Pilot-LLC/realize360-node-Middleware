@@ -67,9 +67,11 @@ app.get(`/${checkDbString}`, async (req, res) => {
   else {
     let generationData = await db.getGeneration(generationUuid);
     if (generationData.image_url) {
+      console.log("Image url found for generation ID: " + generationUuid);
       res.status(200).send(generationData);
     }
     else {
+      console.log("Image url not found for generation ID: " + generationUuid);
       failRequest(res, 400, { message: "Generation not found." });
     }
   }
