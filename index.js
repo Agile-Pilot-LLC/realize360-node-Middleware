@@ -9,9 +9,10 @@ const checkDbString = md5(process.env.CHECK_DB);
 
 app.listen(PORT, () =>
   {
-    console.log(`realizeAPI listening on ${PORT}`)
-    console.log(`GET Endpoint: ${endpointString}`)
-    console.log(`POST Endpoint: ${sendGenerationString}`)
-    console.log(`Check DB Endpoint: ${checkDbString}`)
+    console.log(`realizeAPI listening on ${PORT}`);
+    console.log(`GET Endpoint: ${endpointString}`);
+    console.log(`POST Endpoint: ${sendGenerationString}`);
+    console.log(`Check DB Endpoint: ${checkDbString}`);
+    console.log(`Check DB Key: ${process.env.CHECK_DB_KEY}`);
   }
 );
