@@ -66,7 +66,7 @@ app.get(`/${checkDbString}`, async (req, res) => {
   }
   else {
     let generationData = await db.getGeneration(generationUuid);
-    if (generationData) {
+    if (generationData.image_url) {
       res.status(200).send(generationData);
     }
     else {
