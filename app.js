@@ -106,6 +106,7 @@ app.get(`/${endpointString}`, async (req, res) => {
 
   if (!nonce || !userId || !prompt) {
     failRequest(res);
+    return;
   }
 
   console.log("Query Params Recieved: " + JSON.stringify(req.query));
