@@ -8,6 +8,7 @@ app.use(helmet(), bodyParser.json());
 const md5 = require('md5');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 
 // Custom Dependencies
 const db = require('./db.js');
@@ -23,6 +24,11 @@ const sendGenerationString = md5(process.env.SEND_GENERATION);
 const checkDbString = md5(process.env.CHECK_DB);
 
 const TESTMODE = false;
+
+app.get('/privacy-policy', (req, res) => {
+  res.sendFile(path.join(__dirname, 'privacypolicy.html'));
+});
+
 app.get('/testMetaAuthentication', async (req, res) => {
 
   const { nonce, userId, } = req.query;
