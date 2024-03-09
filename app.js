@@ -29,39 +29,7 @@ app.get('/privacy-policy', (req, res) => {
   res.sendFile(path.join(__dirname, 'privacypolicy.html'));
 });
 
-app.get('/testMetaAuthentication', async (req, res) => {
 
-  const { nonce, userId, } = req.query;
-  if (!nonce || !userId) {
-    failRequest(res);
-  }
-  else {
-    await authenticateUser(axios, nonce, userId).then(async (result) => {
-      if (result) {
-        res.status(200).send("Authenticated!");
-      }
-      else {
-        failRequest(res);
-      }
-    })
-  }
-});
-app.get(`/userInfo`, async (req, res) => {
-  const userId = req.query.userId;
-  if(!userId){
-    failRequest(res, 404);
-  }
-  else {
-    await db.getUserData(userId).then((userInfo) => {
-      if (userInfo) {
-        res.status(200).send(userInfo);
-      }
-      else {
-        failRequest(res, 400, { message: "User not found." });
-      }
-    })
-  }
-});
 app.get(`/${checkDbString}`, async (req, res) => {
   const generationUuid = req.query.g;
   const checkDbKey = req.query.k;
