@@ -42,7 +42,8 @@ app.get(`/${checkDbString}`, async (req, res) => {
     let generationData = await db.getGeneration(generationUuid);
     if (generationData.file_url) {
       console.log("Image url found for generation ID: " + generationUuid);
-      res.status(200).send(generationData);
+      console.log("Sending user URL: " + generationData.file_url)
+      res.status(200).send(generationData.file_url);
     }
     else {
       console.log("Image url not found for generation ID: " + generationUuid);
