@@ -110,7 +110,7 @@ app.get(`/${endpointString}`, async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.sendFile(path.join(__dirname, 'homepage.html'));
 });
 
 module.exports = app;
