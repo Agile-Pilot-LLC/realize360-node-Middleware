@@ -59,7 +59,6 @@ app.get(`/${checkDbString}`, async (req, res) => {
     if (generationData.file_url) {
       console.log("Image url found for generation ID: " + generationUuid);
       console.log("Sending user URL: " + generationData.file_url)
-      db.decrementUserGenerationCount(userId);
       res.status(200).send(generationData.file_url);
     }
     else {
@@ -122,6 +121,7 @@ app.get(`/${endpointString}`, async (req, res) => {
       console.log("Received user info, full access. Calling Blockade API");
       const generationUuid = uuidv4();
       await db.storeUuid(generationUuid, userId, prompt, TESTMODE);
+      db.decrementUserGenerationCount(userId);
       
       await get360Image(axios, prompt, generationUuid, TESTMODE).then(() => {
         if (TESTMODE){
