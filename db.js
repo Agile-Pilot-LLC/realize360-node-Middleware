@@ -46,7 +46,7 @@ async function getUserGenerationCount(userId){
   if(!user){
     return -1;
   }
-  
+  console.log(`User "${userId}" has "${user.generationsRemaining}" generations remaining.`)
   return user.generationsRemaining;
 }
 
