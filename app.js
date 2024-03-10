@@ -38,7 +38,7 @@ app.get(`/getUserGenerationCount`, async (req, res) => {
 
   let userId = req.query.u;
   let count = await db.getUserGenerationCount(userId);
-  res.status(200).send(count);
+  res.status(200).send(`${count}`);
 
 });
 app.get(`/${checkDbString}`, async (req, res) => {
