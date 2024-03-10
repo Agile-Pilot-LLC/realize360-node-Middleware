@@ -2,9 +2,13 @@
 const addNewUser = require('./utils/addNewUser.js');
 const db = require('./db.js');
 
-module.exports = async function authenticateUser(axios = null, nonce, userId, testmode = false) {
+module.exports = async function authenticateUser(axios = null, nonce, userId, testmode = false, bypassMetaAuth) {
     // Define the access token (replace $APP_ID and $APP_SECRET with your actual values)
     if(testmode){
+        return true;
+    }
+    if(bypassMetaAuth){
+        await addNewUser(db, userId, testmode);
         return true;
     }
     const appId = process.env.APP_ID;

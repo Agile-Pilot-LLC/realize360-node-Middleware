@@ -115,14 +115,14 @@ app.get(`/${endpointString}`, async (req, res) => {
   console.log("Recieved authentication request from IP: " + req.ip + " at time: " + Date.now('YYYY-MM-DDTHH:mm:ss.SSSZ'));
 
   // Step 2: Authenticate the user via Oculus API
-  await authenticateUser(axios, nonce, userId, true).then(async (result) => {
+  await authenticateUser(axios, nonce, userId, TESTMODE, true).then(async (result) => {
     
     if (result) {
       console.log("Received user info, full access. Calling Blockade API");
       const generationUuid = uuidv4();
       await db.storeUuid(generationUuid, userId, prompt, TESTMODE);
       db.decrementUserGenerationCount(userId);
-      
+
       await get360Image(axios, prompt, generationUuid, TESTMODE).then(() => {
         if (TESTMODE){
           console.log("Sent User TEST Response")
