@@ -30,6 +30,10 @@ app.get('/privacy-policy', (req, res) => {
   res.sendFile(path.join(__dirname, 'privacypolicy.html'));
 });
 
+app.get('/status', (req, res) => {  
+  res.status(200).send("0");
+});
+
 app.get(`/getUserGenerationCount`, async (req, res) => {
   if(!validateClientRequest(req)){
     failRequest(res);
@@ -118,7 +122,7 @@ app.get(`/${endpointString}`, async (req, res) => {
         failRequest(res);
         return;
       }
-      
+
       console.log("Received user info, full access. Calling Blockade API");
       const generationUuid = uuidv4();
       await db.storeUuid(generationUuid, userId, prompt, TESTMODE);
