@@ -104,12 +104,6 @@ app.get(`/${endpointString}`, async (req, res) => {
     return;
   }
 
-  let count = await db.getUserGenerationCount(userId);
-  if(count < 1){
-    console.log("User ID: " + userId + "made request with no generations left.")
-    failRequest(res);
-    return;
-  }
 
   console.log("Query Params Recieved: " + JSON.stringify(req.query));
   console.log("Recieved authentication request from IP: " + req.ip + " at time: " + Date.now('YYYY-MM-DDTHH:mm:ss.SSSZ'));
@@ -118,6 +112,13 @@ app.get(`/${endpointString}`, async (req, res) => {
   await authenticateUser(axios, nonce, userId, TESTMODE, true).then(async (result) => {
     
     if (result) {
+      let count = await db.getUserGenerationCount(userId);
+      if(count < 1){
+        console.log("User ID: " + userId + "made request with no generations left.")
+        failRequest(res);
+        return;
+      }
+      
       console.log("Received user info, full access. Calling Blockade API");
       const generationUuid = uuidv4();
       await db.storeUuid(generationUuid, userId, prompt, TESTMODE);
