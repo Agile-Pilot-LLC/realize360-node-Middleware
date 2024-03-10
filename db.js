@@ -42,6 +42,11 @@ async function decrementUserGenerationCount(userId){
 }
 async function getUserGenerationCount(userId){
   let user = await getUserData(userId);
+  // if there is no user data return -1
+  if(!user){
+    return -1;
+  }
+  
   return user.generationsRemaining;
 }
 

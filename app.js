@@ -45,7 +45,7 @@ app.get(`/${checkDbString}`, async (req, res) => {
   const generationUuid = req.query.g;
   const checkDbKey = req.query.k;
   const userId = req.query.u;
-  
+
   if(!generationUuid || !checkDbKey || !userId){
     failRequest(res, 404);
   }
