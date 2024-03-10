@@ -17,6 +17,7 @@ const get360Image = require('./get360Image.js');
 const failRequest = require('./utils/failRequest.js');
 const validateBlockadeHeaders = require('./utils/validateBlockadeHeaders.js');
 const validateUuid = require('./utils/validateUuid.js');
+const validateClientRequest = require('./utils/validateClientRequest.js');
 
 // Variables
 const endpointString = md5(process.env.ENDPOINT);
@@ -29,10 +30,25 @@ app.get('/privacy-policy', (req, res) => {
   res.sendFile(path.join(__dirname, 'privacypolicy.html'));
 });
 
+app.get(`/getUserGenerationCount`, async (req, res) => {
+  if(!validateClientRequest(req)){
+    failRequest(res);
+    return;
+  }
 
+  let userId = req.query.u;
+  let count = await db.getUserGenerationCount(userId);
+  res.status(200).send(count);
+
+});
 app.get(`/${checkDbString}`, async (req, res) => {
   const generationUuid = req.query.g;
   const checkDbKey = req.query.k;
+  const userId = req.query.u;
+  
+  if(!generationUuid || !checkDbKey || !userId){
+    failRequest(res, 404);
+  }
 
   if(!validateUuid(generationUuid) || checkDbKey != process.env.CHECK_DB_KEY){
     console.log("Invalid key or uuid used in checkDb request.")
@@ -43,6 +59,7 @@ app.get(`/${checkDbString}`, async (req, res) => {
     if (generationData.file_url) {
       console.log("Image url found for generation ID: " + generationUuid);
       console.log("Sending user URL: " + generationData.file_url)
+      db.decrementUserGenerationCount(userId);
       res.status(200).send(generationData.file_url);
     }
     else {
@@ -77,9 +94,20 @@ app.post(`/${sendGenerationString}`, async (req, res) => {
 
 app.get(`/${endpointString}`, async (req, res) => {
   // Step 1: Request made to the server
+  if(!validateClientRequest(req)){
+    failRequest(res);
+    return;
+  }
   const { n: nonce, u: userId, p: prompt } = req.query;
 
   if (!nonce || !userId || !prompt) {
+    failRequest(res);
+    return;
+  }
+
+  let count = await db.getUserGenerationCount(userId);
+  if(count < 1){
+    console.log("User ID: " + userId + "made request with no generations left.")
     failRequest(res);
     return;
   }
@@ -89,6 +117,7 @@ app.get(`/${endpointString}`, async (req, res) => {
 
   // Step 2: Authenticate the user via Oculus API
   await authenticateUser(axios, nonce, userId, true).then(async (result) => {
+    
     if (result) {
       console.log("Received user info, full access. Calling Blockade API");
       const generationUuid = uuidv4();

@@ -20,11 +20,31 @@ async function saveBlockadeData(uuid, data){
 async function addUser(userId){
   // add new entry to users collection
   await userCollection.doc(userId).set({
-    meta_id: userId
+    meta_id: userId,
+    generationsRemaining: 25
   });
   console.log(`Added user "${userId}" to "${userDatabaseName}" collection.`);
 }
-  
+async function decrementUserGenerationCount(userId){
+  // decrement generations remaining for user
+  let user = await getUserData(userId);
+  let generationsRemaining = user.generationsRemaining;
+  if(generationsRemaining > 0){
+    generationsRemaining--;
+    await userCollection.doc(userId).set({
+      generationsRemaining: generationsRemaining
+    }, { merge: true });
+    console.log(`Decremented generations remaining for user "${userId}" in "${userDatabaseName}" collection.`);
+  }
+  else{
+    console.log(`User "${userId}" has no generations remaining.`);
+  }
+}
+async function getUserGenerationCount(userId){
+  let user = await getUserData(userId);
+  return user.generationsRemaining;
+}
+
 async function getGeneration(uuid){
   let generation = false;
   await generationCollection.doc(uuid).get().then((doc) => {
@@ -92,5 +112,7 @@ module.exports = {
   storeUuid,
   checkIfUuidExists,
   getUserData,
-  addUser
+  addUser,
+  decrementUserGenerationCount,
+  getUserGenerationCount
 };
