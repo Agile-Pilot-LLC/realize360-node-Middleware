@@ -25,13 +25,16 @@ const sendGenerationString = md5(process.env.SEND_GENERATION);
 const checkDbString = md5(process.env.CHECK_DB);
 
 const TESTMODE = false;
+// 0 = Down, reject users
+  // 1 = Up, accept users
+const SERVERSTATUSCODE = 1;
 
 app.get('/privacy-policy', (req, res) => {
   res.sendFile(path.join(__dirname, 'privacypolicy.html'));
 });
 
 app.get('/status', (req, res) => {  
-  res.status(200).send("0");
+  res.status(200).send(`${SERVERSTATUSCODE}`);
 });
 
 app.get(`/getUserGenerationCount`, async (req, res) => {
@@ -50,7 +53,7 @@ app.get(`/${checkDbString}`, async (req, res) => {
   const checkDbKey = req.query.k;
   const userId = req.query.u;
 
-  if(!generationUuid || !checkDbKey || !userId){
+  if(!generationUuid || !checkDbKey || !userId ){
     failRequest(res, 404);
   }
 
@@ -103,7 +106,7 @@ app.get(`/${endpointString}`, async (req, res) => {
   }
   const { n: nonce, u: userId, p: prompt } = req.query;
 
-  if (!nonce || !userId || !prompt) {
+  if (!nonce || !userId || !prompt || SERVERSTATUSCODE == 0) {
     failRequest(res);
     return;
   }
