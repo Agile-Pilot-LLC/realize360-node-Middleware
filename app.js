@@ -66,6 +66,7 @@ app.get(`/${checkDbString}`, async (req, res) => {
     if (generationData.file_url) {
       console.log("Image url found for generation ID: " + generationUuid);
       console.log("Sending user URL: " + generationData.file_url)
+      await db.moveBlockadeData(generationUuid);
       res.status(200).send(generationData.file_url);
     }
     else {

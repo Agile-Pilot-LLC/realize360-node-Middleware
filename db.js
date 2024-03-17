@@ -8,12 +8,27 @@ const db = new Firestore({
 });
 
 const generationDatabaseName = "generations";
+const activeGenerationDatabaseName = "active-generations";
 const userDatabaseName = "users";
+const activeGenerationCollection = db.collection(activeGenerationDatabaseName);
 const generationCollection = db.collection(generationDatabaseName);
 const userCollection = db.collection(userDatabaseName);
 
+async function moveBlockadeData(uuid){
+  // move data from activeGenerations to generations
+  let generationData = await getGeneration(uuid);
+  if(generationData){
+    await generationCollection.doc(uuid).set(generationData);
+    console.log(`Moved Blockade Data for UUID "${uuid}" to "${generationDatabaseName}" collection.`);
+    await activeGenerationCollection.doc(uuid).delete();
+    console.log(`Deleted Blockade Data for UUID "${uuid}" from "${activeGenerationDatabaseName}" collection.`);
+  }
+  else{
+    console.log(`No generation found for UUID "${uuid}" in "${generationDatabaseName}" collection.`);
+  }
+}
 async function saveBlockadeData(uuid, data){
-  await generationCollection.doc(uuid).set(data, { merge: true });
+  await activeGenerationCollection.doc(uuid).set(data, { merge: true });
   console.log(`Saved Blockade Data for UUID "${uuid}" in "${generationDatabaseName}" collection.`);
 }
 
@@ -52,7 +67,7 @@ async function getUserGenerationCount(userId){
 
 async function getGeneration(uuid){
   let generation = false;
-  await generationCollection.doc(uuid).get().then((doc) => {
+  await activeGenerationCollection.doc(uuid).get().then((doc) => {
     if(doc.exists){
       generation = doc.data();
     }
@@ -69,7 +84,7 @@ async function storeUuid(uuid, userId, prompt, TESTMODE){
     return;
   }
 
-  await generationCollection.doc(uuid).set({
+  await activeGenerationCollection.doc(uuid).set({
     metaUserId: userId,
   }).then(() => {
     console.log(`Stored UUID "${uuid}" in "${generationDatabaseName}" collection.`);
@@ -79,7 +94,7 @@ async function checkIfUuidExists(uuid){
   // check if the webhook hash exists in the database
   console.log(`Checking if UUID "${uuid}" exists in "${generationDatabaseName}" collection.`)
   let result = false;
-  await generationCollection.doc(uuid).get().then((doc) => {
+  await activeGenerationCollection.doc(uuid).get().then((doc) => {
     if(doc.exists){
       console.log(`UUID "${uuid}" exists in "${generationDatabaseName}" collection.`);
       result = true;
@@ -113,6 +128,7 @@ async function getUserData(userId, testmode = false){
 
 module.exports = {
   saveBlockadeData,
+  moveBlockadeData,
   getGeneration,
   storeUuid,
   checkIfUuidExists,
