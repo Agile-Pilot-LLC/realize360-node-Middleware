@@ -71,7 +71,7 @@ app.get(`/${checkDbString}`, async (req, res) => {
     }
     else {
       console.log("Image url not found for generation ID: " + generationUuid);
-      failRequest(res, 400, { message: "Generation not found." });
+      failRequest(res, 202, { message: "Not found or still in progress." });
     }
   }
 });
@@ -117,7 +117,7 @@ app.get(`/${endpointString}`, async (req, res) => {
   console.log("Recieved authentication request from IP: " + req.ip + " at time: " + Date.now('YYYY-MM-DDTHH:mm:ss.SSSZ'));
 
   // Step 2: Authenticate the user via Oculus API
-  await authenticateUser(axios, nonce, userId, TESTMODE, true).then(async (result) => {
+  await authenticateUser(axios, nonce, userId, TESTMODE, false).then(async (result) => {
     
     if (result) {
       let count = await db.getUserGenerationCount(userId);
