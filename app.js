@@ -71,7 +71,7 @@ app.get(`/${checkDbString}`, async (req, res) => {
     }
     else {
       console.log("Image url not found for generation ID: " + generationUuid);
-      failRequest(res, 202, { message: "Not found or still in progress." });
+      failRequest(res, 400, { message: "Not found or still in progress." });
     }
   }
 });
