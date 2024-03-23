@@ -40,8 +40,11 @@ async function addUser(userId){
   });
   console.log(`Added user "${userId}" to "${userDatabaseName}" collection.`);
 }
-async function decrementUserGenerationCount(userId){
+async function decrementUserGenerationCount(userId, TESTMODE){
   // decrement generations remaining for user
+  if(TESTMODE){
+    return;
+  }
   let user = await getUserData(userId);
   let generationsRemaining = user.generationsRemaining;
   if(generationsRemaining > 0){

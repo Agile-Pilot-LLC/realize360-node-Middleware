@@ -23,8 +23,9 @@ const validateClientRequest = require('./utils/validateClientRequest.js');
 const endpointString = md5(process.env.ENDPOINT);
 const sendGenerationString = md5(process.env.SEND_GENERATION);
 const checkDbString = md5(process.env.CHECK_DB);
+const isDevEnvironment = process.env.NODE_ENV === 'development';
 
-const TESTMODE = false;
+const TESTMODE = isDevEnvironment ? true : false;
 // 0 = Down, reject users
   // 1 = Up, accept users
 const SERVERSTATUSCODE = 1;
@@ -130,7 +131,7 @@ app.get(`/${endpointString}`, async (req, res) => {
       console.log("Received user info, full access. Calling Blockade API");
       const generationUuid = uuidv4();
       await db.storeUuid(generationUuid, userId, prompt, TESTMODE);
-      db.decrementUserGenerationCount(userId);
+      db.decrementUserGenerationCount(userId, TESTMODE);
 
       await get360Image(axios, prompt, generationUuid, TESTMODE).then(() => {
         if (TESTMODE){
