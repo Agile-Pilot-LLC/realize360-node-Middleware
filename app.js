@@ -66,14 +66,10 @@ app.get(`/${checkDbString}`, async (req, res) => {
     if(TESTMODE){
       let generationData = await db.getGenerationTestMode(generationUuid);
       if (generationData.file_url) {
-        console.log("Image url found for generation ID: " + generationUuid);
-        console.log("Sending user URL: " + generationData.file_url)
+        console.log("Image url found for  TESTMODE generation ID: " + generationUuid);
         res.status(200).send(generationData.file_url);
       }
-      else {
-        console.log("Image url not found for generation ID: " + generationUuid);
-        failRequest(res, 400, { message: "Not found or still in progress." });
-      }
+      return;
     }
     let generationData = await db.getGeneration(generationUuid);
     if (generationData.file_url) {
