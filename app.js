@@ -108,7 +108,7 @@ app.get(`/${endpointString}`, async (req, res) => {
   }
   const { n: nonce, u: userId, p: prompt } = req.query;
 
-  if (!nonce || !userId || !prompt || SERVERSTATUSCODE == 0) {
+  if (!nonce || !userId || SERVERSTATUSCODE == 0) {
     failRequest(res);
     return;
   }
