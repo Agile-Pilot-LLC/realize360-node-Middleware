@@ -67,8 +67,22 @@ async function getUserGenerationCount(userId){
   console.log(`User "${userId}" has "${user.generationsRemaining}" generations remaining.`)
   return user.generationsRemaining;
 }
-
+async function getGenerationTestMode(uuid){
+  if(TESTMODE){
+    let generation = false;
+    await generationCollection.doc(uuid).get().then((doc) => {
+      if(doc.exists){
+        generation = doc.data();
+      }
+      else{
+        console.log(`No generation found for UUID "${uuid}" in "${generationDatabaseName}" collection.`);
+      }
+    });
+    return generation;
+  }
+}
 async function getGeneration(uuid){
+
   let generation = false;
   await activeGenerationCollection.doc(uuid).get().then((doc) => {
     if(doc.exists){
@@ -138,5 +152,6 @@ module.exports = {
   getUserData,
   addUser,
   decrementUserGenerationCount,
-  getUserGenerationCount
+  getUserGenerationCount,
+  getGenerationTestMode
 };
