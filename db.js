@@ -58,7 +58,7 @@ async function saveGeneration(generationId){
     blockadeId: id,
     completedAt: completed_at
   });
-  console.log(`Saved image URL "${imageUrl}" for user "${userId}" in "${savedGenerationsDatabaseName}" collection.`);
+  console.log(`Saved image URL "${file_url}" for user "${metaUserId}" in "${savedGenerationsDatabaseName}" collection.`);
   // store imageUrl file and depthMapUrl file in bucket
   const file = imageBucket.file(generationId + "FFFF");
   const depthMap = imageBucket.file(generationId+ "DDDD");
