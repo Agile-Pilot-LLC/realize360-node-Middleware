@@ -37,6 +37,34 @@ app.get('/privacy-policy', (req, res) => {
 app.get('/status', (req, res) => {  
   res.status(200).send(`${SERVERSTATUSCODE}`);
 });
+app.get('/savedGenerations', async (req, res) => {
+  // if(!validateClientRequest(req)){
+  //   failRequest(res);
+  //   return;
+  // }
+  let userId = req.query.u;
+  let generations = await db.getSavedGenerations(userId);
+  res.status(200).send(generations);
+});
+app.get('/saveGeneration', async (req, res) => {
+  // if(!validateClientRequest(req)){
+  //   failRequest(res);
+  //   return;
+  // }
+  let userId = req.query.u;
+  let generationId = req.query.g;
+  let nonce = req.query.n;
+  await authenticateUser(axios, nonce, userId, TESTMODE, false).then(async (result) => {
+    if(result){
+      await db.saveGeneration(generationId);
+      res.status(200).send("Saved Generation");
+    }
+    else{
+      res.status(400).send("Failed to save generation");
+    }
+  });
+});
+
 
 app.get(`/getUserGenerationCount`, async (req, res) => {
   if(!validateClientRequest(req)){
@@ -71,7 +99,7 @@ app.get(`/${checkDbString}`, async (req, res) => {
       }
       return;
     }
-    let generationData = await db.getGeneration(generationUuid);
+    let generationData = await db.getActiveGeneration(generationUuid);
     if (generationData.file_url) {
       console.log("Image url found for generation ID: " + generationUuid);
       console.log("Sending user URL: " + generationData.file_url)

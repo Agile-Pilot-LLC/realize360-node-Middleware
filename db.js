@@ -1,24 +1,32 @@
 const { Firestore } = require('@google-cloud/firestore');
+const { Storage } = require('@google-cloud/storage');
 
 const serviceAccount = JSON.parse(process.env.FIRESTORE_AUTH);
+const bucketServiceAccount = JSON.parse(process.env.BUCKET_AUTH);
 const db = new Firestore({
   projectId: 'realize-360',
   databaseId: 'realize-db',
   credentials: serviceAccount
 });
+const imageBucket = new Storage({
+  projectId: 'realize-360',
+  credentials: bucketServiceAccount
+}).bucket('realize-360.appspot.com');
 
 const generationDatabaseName = "generations";
 const activeGenerationDatabaseName = "active-generations";
 const userDatabaseName = "users";
+const savedGenerationsDatabaseName = "saved-generations";
 const activeGenerationCollection = db.collection(activeGenerationDatabaseName);
 const generationCollection = db.collection(generationDatabaseName);
 const userCollection = db.collection(userDatabaseName);
+const savedGenerationsCollection = db.collection(savedGenerationsDatabaseName);
 
 async function moveBlockadeData(uuid){
   // move data from activeGenerations to generations
   let generationData = await getGeneration(uuid);
   if(generationData){
-    await generationCollection.doc(uuid).set(generationData);
+    await generationCollection.doc(uuid).set({...generationData, expireAt: Date.now()});
     console.log(`Moved Blockade Data for UUID "${uuid}" to "${generationDatabaseName}" collection.`);
     await activeGenerationCollection.doc(uuid).delete();
     console.log(`Deleted Blockade Data for UUID "${uuid}" from "${activeGenerationDatabaseName}" collection.`);
@@ -30,6 +38,36 @@ async function moveBlockadeData(uuid){
 async function saveBlockadeData(uuid, data){
   await activeGenerationCollection.doc(uuid).set(data, { merge: true });
   console.log(`Saved Blockade Data for UUID "${uuid}" in "${generationDatabaseName}" collection.`);
+}
+async function getSavedGenerations(userId){
+  let savedGenerations = [];
+  // only get file_urls from savedGenerations collection
+  await savedGenerationsCollection.where("metaUserId", "==", userId).get().then((snapshot) => {
+    snapshot.forEach((doc) => {
+      savedGenerations.push(doc.data().imageUrl);
+    });
+  });
+  return savedGenerations;
+}
+async function saveGeneration(generationId){
+  const { file_url, depth_map_url, id, completed_at, metaUserId } = await getColdGeneration(generationId);
+  await savedGenerationsCollection.doc(generationId).set({
+    metaUserId: metaUserId,
+    imageUrl: file_url,
+    depthMapUrl: depth_map_url,
+    blockadeId: id,
+    completedAt: completed_at
+  });
+  console.log(`Saved image URL "${imageUrl}" for user "${userId}" in "${savedGenerationsDatabaseName}" collection.`);
+  // store imageUrl file and depthMapUrl file in bucket
+  const file = imageBucket.file(generationId + "FFFF");
+  const depthMap = imageBucket.file(generationId+ "DDDD");
+  const fileStream = file.createWriteStream();
+  const depthMapStream = depthMap.createWriteStream();
+  fileStream.write(file_url);
+  depthMapStream.write(depth_map_url);
+
+  
 }
 
 async function addUser(userId){
@@ -79,10 +117,22 @@ async function getGenerationTestMode(uuid){
   });
   return generation;
 }
-async function getGeneration(uuid){
+async function getActiveGeneration(uuid){
 
   let generation = false;
   await activeGenerationCollection.doc(uuid).get().then((doc) => {
+    if(doc.exists){
+      generation = doc.data();
+    }
+    else{
+      console.log(`No generation found for UUID "${uuid}" in "${generationDatabaseName}" collection.`);
+    }
+  });
+  return generation;
+}
+async function getColdGeneration(uuid){
+  let generation = false;
+  await generationCollection.doc(uuid).get().then((doc) => {
     if(doc.exists){
       generation = doc.data();
     }
@@ -144,12 +194,14 @@ async function getUserData(userId, testmode = false){
 module.exports = {
   saveBlockadeData,
   moveBlockadeData,
-  getGeneration,
+  getActiveGeneration,
   storeUuid,
   checkIfUuidExists,
   getUserData,
   addUser,
   decrementUserGenerationCount,
   getUserGenerationCount,
-  getGenerationTestMode
+  getGenerationTestMode,
+  saveGeneration,
+  getSavedGenerations
 };
