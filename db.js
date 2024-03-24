@@ -45,7 +45,7 @@ async function getSavedGenerations(userId){
   // only get file_urls from savedGenerations collection
   await savedGenerationsCollection.where("metaUserId", "==", userId).get().then((snapshot) => {
     snapshot.forEach((doc) => {
-      savedGenerations.push(doc.data().imageUrl);
+      savedGenerations.push(doc.id);
     });
   });
   return savedGenerations;
