@@ -66,8 +66,9 @@ async function saveGeneration(generationId){
   const depthMapStream = depthMap.createWriteStream();
   fileStream.write(file_url);
   depthMapStream.write(depth_map_url);
-
-  
+  fileStream.end();
+  depthMapStream.end();
+  console.log(`Saved image URL "${file_url}" and depth map URL "${depth_map_url}" to bucket.`);
 }
 
 async function addUser(userId){
