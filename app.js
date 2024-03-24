@@ -43,8 +43,10 @@ app.get('/savedGenerations', async (req, res) => {
   //   return;
   // }
   let userId = req.query.u;
-  let generations = await db.getSavedGenerations(userId);
-  res.status(200).send(generations);
+  let generationUuidArray = await db.getSavedGenerations(userId);
+  // convert to a string with each generation uuid separated by "|"
+  let generationString = generationUuidArray.join("|");
+  res.status(200).send(generationString);
 });
 app.get('/saveGeneration', async (req, res) => {
   // if(!validateClientRequest(req)){
