@@ -12,7 +12,7 @@ const db = new Firestore({
 const imageBucket = new Storage({
   projectId: 'realize-360',
   credentials: bucketServiceAccount
-}).bucket('realize-360.appspot.com');
+}).bucket('realize-public');
 
 const generationDatabaseName = "generations";
 const activeGenerationDatabaseName = "active-generations";
@@ -79,7 +79,6 @@ async function saveGeneration(generationId){
   console.log(`Saved image URL "${file_url}" for user "${metaUserId}" in "${savedGenerationsDatabaseName}" collection.`);
   // store contents of imageUrl file and depthMapUrl file in bucket
   await saveFilesToBucket(file_url, depth_map_url, imageBucket, generationId);
-  console.log(`Saved image and depth map files to bucket.`);
 }
 
 async function addUser(userId){
