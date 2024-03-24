@@ -1,5 +1,6 @@
 const { Firestore } = require('@google-cloud/firestore');
 const { Storage } = require('@google-cloud/storage');
+const axios = require('axios');
 
 const serviceAccount = JSON.parse(process.env.FIRESTORE_AUTH);
 const bucketServiceAccount = JSON.parse(process.env.BUCKET_AUTH);
@@ -49,6 +50,23 @@ async function getSavedGenerations(userId){
   });
   return savedGenerations;
 }
+async function downloadAndUploadFile(url, bucket, filename) {
+  const response = await axios.get(url, { responseType: 'stream' });
+  response.data.pipe(bucket.file(filename).createWriteStream());
+  return new Promise((resolve, reject) => {
+      response.data.on('end', () => resolve());
+      response.data.on('error', err => reject(err));
+  });
+}
+async function saveFilesToBucket(imageUrl, depthMapUrl, imageBucket, generationId) {
+  try {
+      await downloadAndUploadFile(imageUrl, imageBucket, generationId + "FFFF.jpg");
+      await downloadAndUploadFile(depthMapUrl, imageBucket, generationId + "DDDD.jpg");
+      console.log(`Saved image and depth map files to bucket.`);
+  } catch (error) {
+      console.error(`Error saving files to bucket: ${error}`);
+  }
+}
 async function saveGeneration(generationId){
   const { file_url, depth_map_url, id, completed_at, metaUserId } = await getColdGeneration(generationId);
   await savedGenerationsCollection.doc(generationId).set({
@@ -59,16 +77,9 @@ async function saveGeneration(generationId){
     completedAt: completed_at
   });
   console.log(`Saved image URL "${file_url}" for user "${metaUserId}" in "${savedGenerationsDatabaseName}" collection.`);
-  // store imageUrl file and depthMapUrl file in bucket
-  const file = imageBucket.file(generationId + "FFFF");
-  const depthMap = imageBucket.file(generationId+ "DDDD");
-  const fileStream = file.createWriteStream();
-  const depthMapStream = depthMap.createWriteStream();
-  fileStream.write(file_url);
-  depthMapStream.write(depth_map_url);
-  fileStream.end();
-  depthMapStream.end();
-  console.log(`Saved image URL "${file_url}" and depth map URL "${depth_map_url}" to bucket.`);
+  // store contents of imageUrl file and depthMapUrl file in bucket
+  await saveFilesToBucket(file_url, depth_map_url, imageBucket, generationId);
+  console.log(`Saved image and depth map files to bucket.`);
 }
 
 async function addUser(userId){
