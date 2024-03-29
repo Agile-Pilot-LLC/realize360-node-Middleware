@@ -20,11 +20,4 @@ The back end server is built on top of Node.JS with Express, along with a large 
 Note: This representation roughly represents the current state of a single transaction between a client and a server within the production application. Terms are used vaguely, and some wording is inaccurate.
 ![IMG_3677](https://github.com/nicholasamato/realizeapi/assets/70933144/dbfbd1e3-1004-47fd-a83c-ddc4e337a6eb)
 
-### Remote Endpoints
-The information will be more accurate directly from google cloud but these were the last checked encrypted endpoints, believed to be present on the unity app (Build v0.0.18). For **Local Endpoints**, see your console when starting up.
 
-##### Remote Check Database Key
-6e4523e058b286d10f369295ccad07a7
-
-##### Blockade Labs API URL
-https://backend.blockadelabs.com/api/v1/skybox
