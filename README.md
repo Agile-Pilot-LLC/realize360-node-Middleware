@@ -17,7 +17,7 @@ The back end server is built on top of Node.JS with Express, along with a large 
 
 # 🔒 Confidential 🔒
 ### High Level Diagram
-Note: This representation roughly represents the current state of the production application. Terms are used vaguely, and some wording is inaccurate.
+Note: This representation roughly represents the current state of a single transaction between a client and a server within the production application. Terms are used vaguely, and some wording is inaccurate.
 ![IMG_3677](https://github.com/nicholasamato/realizeapi/assets/70933144/dbfbd1e3-1004-47fd-a83c-ddc4e337a6eb)
 
 ### Remote Endpoints
