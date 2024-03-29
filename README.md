@@ -3,7 +3,7 @@ This information has been originated by by Agile Pilot LLC.
 
 All information under the "Confidential" section is Private Information owned by Agile Pilot LLC
 
-The contents of this file include sensitive data. If information in this section gets shared, the project is at risk of being in a lower level security state than preferred.
+The contents of the Confidential section include sensitive data. If information in this section gets shared, the project is at risk of being in a lower level security state than preferred.
 It is important for security practices that this be updated in the future to obfuscate the endpoints in their respective location (Front-end, backend, git repo etc).
 
 Anyone who is an active maintainer is responsible for information security.
