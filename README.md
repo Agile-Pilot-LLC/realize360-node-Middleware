@@ -1,4 +1,5 @@
 # Local Test Commands (Deprecated - Needs Work)
+All information below is Private Information owned by Agile Pilot LLC:
 
 # Mac Remote START GENERATION
 curl https://realize.agilepilot.co/2fe1b096ed13e45b2bfb2751bf922cae\?n=123\&u=123\&p=mountains
