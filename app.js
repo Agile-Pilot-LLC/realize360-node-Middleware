@@ -23,8 +23,9 @@ const validateClientRequest = require('./utils/validateClientRequest.js');
 const endpointString = md5(process.env.ENDPOINT);
 const sendGenerationString = md5(process.env.SEND_GENERATION);
 const checkDbString = md5(process.env.CHECK_DB);
+const isDevEnvironment = process.env.NODE_ENV === 'development';
 
-const TESTMODE = false;
+const TESTMODE = isDevEnvironment ? true : false;
 // 0 = Down, reject users
   // 1 = Up, accept users
 const SERVERSTATUSCODE = 1;
@@ -36,6 +37,36 @@ app.get('/privacy-policy', (req, res) => {
 app.get('/status', (req, res) => {  
   res.status(200).send(`${SERVERSTATUSCODE}`);
 });
+app.get('/savedGenerations', async (req, res) => {
+  // if(!validateClientRequest(req)){
+  //   failRequest(res);
+  //   return;
+  // }
+  let userId = req.query.u;
+  let generationUuidArray = await db.getSavedGenerations(userId);
+  // convert to a string with each generation uuid separated by "|"
+  let generationString = generationUuidArray.join("|");
+  res.status(200).send(generationString);
+});
+app.get('/saveGeneration', async (req, res) => {
+  // if(!validateClientRequest(req)){
+  //   failRequest(res);
+  //   return;
+  // }
+  let userId = req.query.u;
+  let generationId = req.query.g;
+  let nonce = req.query.n;
+  await authenticateUser(axios, nonce, userId, TESTMODE, false).then(async (result) => {
+    if(result){
+      await db.saveGeneration(generationId);
+      res.status(200).send("Saved Generation");
+    }
+    else{
+      res.status(400).send("Failed to save generation");
+    }
+  });
+});
+
 
 app.get(`/getUserGenerationCount`, async (req, res) => {
   if(!validateClientRequest(req)){
@@ -62,7 +93,15 @@ app.get(`/${checkDbString}`, async (req, res) => {
     failRequest(res, 404);
   }
   else {
-    let generationData = await db.getGeneration(generationUuid);
+    if(TESTMODE){
+      let generationData = await db.getGenerationTestMode(generationUuid);
+      if (generationData.file_url) {
+        console.log("Image url found for  TESTMODE generation ID: " + generationUuid);
+        res.status(200).send(generationData.file_url);
+      }
+      return;
+    }
+    let generationData = await db.getActiveGeneration(generationUuid);
     if (generationData.file_url) {
       console.log("Image url found for generation ID: " + generationUuid);
       console.log("Sending user URL: " + generationData.file_url)
@@ -107,7 +146,7 @@ app.get(`/${endpointString}`, async (req, res) => {
   }
   const { n: nonce, u: userId, p: prompt } = req.query;
 
-  if (!nonce || !userId || !prompt || SERVERSTATUSCODE == 0) {
+  if (!nonce || !userId || SERVERSTATUSCODE == 0) {
     failRequest(res);
     return;
   }
@@ -130,7 +169,7 @@ app.get(`/${endpointString}`, async (req, res) => {
       console.log("Received user info, full access. Calling Blockade API");
       const generationUuid = uuidv4();
       await db.storeUuid(generationUuid, userId, prompt, TESTMODE);
-      db.decrementUserGenerationCount(userId);
+      db.decrementUserGenerationCount(userId, TESTMODE);
 
       await get360Image(axios, prompt, generationUuid, TESTMODE).then(() => {
         if (TESTMODE){
