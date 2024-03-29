@@ -12,19 +12,20 @@ This repository hosts the back end server of a software application which is int
 The back end server is built on top of Node.JS with Express, along with a large list of plugins installed. These plugins enable access to things such Google Cloud databases, environment variables, and REST communication.
 
 # 🔒 Confidential 🔒
-### Local Endpoints
-(see your console when starting up)
+### High Level Diagram
+![IMG_3677](https://github.com/nicholasamato/realizeapi/assets/70933144/dbfbd1e3-1004-47fd-a83c-ddc4e337a6eb)
 
 ### Remote Endpoints
-The information will be more accurate directly from google cloud but these were the last checked encrypted endpoints, believed to be present on the unity app (Build v0.0.18)
-#### Remote Start Generation Endpoint
+The information will be more accurate directly from google cloud but these were the last checked encrypted endpoints, believed to be present on the unity app (Build v0.0.18). For **Local Endpoints**, see your console when starting up.
+
+##### Remote Start Generation Endpoint
 6fbe4f7a8258b9915fc8e07fdaeacad6
 
-#### Remote Check Database Endpoint
+##### Remote Check Database Endpoint
 72f03d5f0df8e7c37d09ad2358395857
 
-#### Remote Check Database Key
+##### Remote Check Database Key
 6e4523e058b286d10f369295ccad07a7
 
-#### Blockade Labs API URL
+##### Blockade Labs API URL
 https://backend.blockadelabs.com/api/v1/skybox
