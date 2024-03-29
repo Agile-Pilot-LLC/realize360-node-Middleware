@@ -1,5 +1,5 @@
 
-##### All information below is Private Information owned by Agile Pilot LLC
+# All information below is Private Information owned by Agile Pilot LLC
 The contents of this file include sensitive data. 
 It is important for security practices that this be updated in the feature to obfuscate the endpoints in their respective location (Front-end, backend, git repo etc).
 # Local Test Commands (Deprecated - Needs Work)
