@@ -1,20 +1,23 @@
-# Local Test Commands
+### ⚖️ Legal Disclaimer ⚖️
+This information has been originated by by Agile Pilot LLC.
 
-# Mac Remote START GENERATION
-curl https://realize.agilepilot.co/2fe1b096ed13e45b2bfb2751bf922cae\?n=123\&u=123\&p=mountains
+All information under the "Confidential" section is Private Information owned by Agile Pilot LLC
 
-# Windows Remote START GENERATION
-curl https://realize.agilepilot.co/2fe1b096ed13e45b2bfb2751bf922cae?n=123"&"u=123"&"p=mountains
+The contents of the Confidential section include sensitive data. If information in this section gets shared, the project is at risk of being in a lower level security state than preferred.
+It is important for security practices that this be updated in the future to obfuscate the endpoints in their respective location (Front-end, backend, git repo etc).
 
-curl https://realize.agilepilot.co/
+Anyone who is an active maintainer is responsible for information security.
+# 🗒️ About 🗒️
+Production Application Version: 
+- Public: 0.0.1
+- Private: Build v0.0.18
 
-curl http://localhost:8080/6fbe4f7a8258b9915fc8e07fdaeacad6\?g=3603c100-0899-436f-a1e6-ffbf15824fcb\&k=123
+This repository hosts the code for the back end server of a software application which is intended to respond to Realize 360 interface requests. 
+The back end server is built on top of Node.JS with Express, along with a large list of plugins installed. These plugins enable access to things such Google Cloud databases, environment variables, and REST communication.
 
-# Mac Remote CHECK DB
-curl https://realize.agilepilot.co/72f03d5f0df8e7c37d09ad2358395857\?g=3603c100-0899-436f-a1e6-ffbf15824fcb\&k=6e4523e058b286d10f369295ccad07a7
+# 🔒 Confidential 🔒
+### High Level Diagram
+Note: This representation roughly represents the current state of a single transaction between a client and a server within the production application. Terms are used vaguely, and some wording is inaccurate.
+![IMG_3677](https://github.com/nicholasamato/realizeapi/assets/70933144/dbfbd1e3-1004-47fd-a83c-ddc4e337a6eb)
 
-# Windows Remote CHECK DB
-curl https://realize.agilepilot.co/72f03d5f0df8e7c37d09ad2358395857?g=3603c100-0899-436f-a1e6-ffbf15824fcb"&"k=6e4523e058b286d10f369295ccad07a7
 
-# Blockade API Test
-curl -X POST -H "Content-Type: application/json" -H "x-api-key: YOUR_API_KEY" -d '{"prompt":"YOUR_PROMPT"}' https://backend.blockadelabs.com/api/v1/skybox
