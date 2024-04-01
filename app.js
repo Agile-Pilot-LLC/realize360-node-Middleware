@@ -176,10 +176,10 @@ app.get(`/${endpointString}`, async (req, res) => {
       await get360Image(axios, prompt, generationUuid, TESTMODE).then(() => {
         if (TESTMODE){
           console.log("Sent User TEST Response")
-          res.status(200).send({ generationId: "c52c73e3-4b9d-475b-863c-d2a10f8cb6b1"});
+          res.status(200).send("c52c73e3-4b9d-475b-863c-d2a10f8cb6b1");
         }
         else{
-          res.status(200).send({ generationId: generationUuid});
+          res.status(200).send(generationUuid);
         }
       });
     }
