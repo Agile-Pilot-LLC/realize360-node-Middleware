@@ -38,10 +38,7 @@ app.get('/status', (req, res) => {
   res.status(200).send(`${SERVERSTATUSCODE}`);
 });
 app.get('/savedGenerations', async (req, res) => {
-  // if(!validateClientRequest(req)){
-  //   failRequest(res);
-  //   return;
-  // }
+  // TODO: Validate this request and encrypt the endpoint, make it a POST
   let userId = req.query.u;
   let generationUuidArray = await db.getSavedGenerations(userId);
   // convert to a string with each generation uuid separated by "|"
@@ -49,10 +46,7 @@ app.get('/savedGenerations', async (req, res) => {
   res.status(200).send(generationString);
 });
 app.get('/saveGeneration', async (req, res) => {
-  // if(!validateClientRequest(req)){
-  //   failRequest(res);
-  //   return;
-  // }
+  // TODO: Validate this request and encrypt the endpoint, make it a POST
   let userId = req.query.u;
   let generationId = req.query.g;
   let nonce = req.query.n;
@@ -94,19 +88,27 @@ app.get(`/${checkDbString}`, async (req, res) => {
   }
   else {
     if(TESTMODE){
-      let generationData = await db.getGenerationTestMode(generationUuid);
-      if (generationData.file_url) {
-        console.log("Image url found for  TESTMODE generation ID: " + generationUuid);
-        res.status(200).send(generationData.file_url);
-      }
+      res.status(200).send({
+        imageUrl : "https://storage.googleapis.com/realize-public/019a0a6b-a042-4404-b7e6-cf37e4855699FFFF.jpg",
+        depthmapUrl : "https://storage.googleapis.com/realize-public/019a0a6b-a042-4404-b7e6-cf37e4855699DDDD.jpg"
+      });
       return;
     }
+    
     let generationData = await db.getActiveGeneration(generationUuid);
+
     if (generationData.file_url) {
       console.log("Image url found for generation ID: " + generationUuid);
       console.log("Sending user URL: " + generationData.file_url)
+
+      var generationDataResponse = {
+        imageUrl: generationData.file_url,
+        depthmapUrl: generationData.depth_map_url
+      }
+
       await db.moveBlockadeData(generationUuid);
-      res.status(200).send(generationData.file_url);
+
+      res.status(200).send(generationDataResponse);
     }
     else {
       console.log("Image url not found for generation ID: " + generationUuid);
