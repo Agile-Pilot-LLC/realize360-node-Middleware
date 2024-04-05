@@ -46,6 +46,10 @@ app.get('/savedGenerations', async (req, res) => {
   res.status(200).send(generationString);
 });
 app.get('/saveGeneration', async (req, res) => {
+  if(!validateClientRequest(req)){
+    failRequest(res);
+    return;
+  }
   // TODO: Validate this request and encrypt the endpoint, make it a POST
   let userId = req.query.u;
   let generationId = req.query.g;
