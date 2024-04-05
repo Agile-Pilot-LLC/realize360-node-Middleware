@@ -6,7 +6,7 @@ All information under the "Confidential" section is Private Information owned by
 The contents of the Confidential section include sensitive data. If information in this section gets shared, the project is at risk of being in a lower level security state than preferred.
 It is important for security practices that this be updated in the future to obfuscate the endpoints in their respective location (Front-end, backend, git repo etc).
 
-Anyone who is an active maintainer is responsible for information security.
+Anyone who has access to this project is responsible for information security.
 # 🗒️ About 🗒️
 Production Application Version: 
 - Public: 0.0.1
