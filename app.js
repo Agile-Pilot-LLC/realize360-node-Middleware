@@ -23,8 +23,9 @@ const validateClientRequest = require('./utils/validateClientRequest.js');
 const endpointString = md5(process.env.ENDPOINT);
 const sendGenerationString = md5(process.env.SEND_GENERATION);
 const checkDbString = md5(process.env.CHECK_DB);
+const isDevEnvironment = process.env.NODE_ENV === 'development';
 
-const TESTMODE = false;
+const TESTMODE = isDevEnvironment ? true : false;
 // 0 = Down, reject users
   // 1 = Up, accept users
 const SERVERSTATUSCODE = 1;
@@ -36,6 +37,30 @@ app.get('/privacy-policy', (req, res) => {
 app.get('/status', (req, res) => {  
   res.status(200).send(`${SERVERSTATUSCODE}`);
 });
+app.get('/savedGenerations', async (req, res) => {
+  // TODO: Validate this request and encrypt the endpoint, make it a POST
+  let userId = req.query.u;
+  let generationUuidArray = await db.getSavedGenerations(userId);
+  // convert to a string with each generation uuid separated by "|"
+  let generationString = generationUuidArray.join("|");
+  res.status(200).send(generationString);
+});
+app.get('/saveGeneration', async (req, res) => {
+  // TODO: Validate this request and encrypt the endpoint, make it a POST
+  let userId = req.query.u;
+  let generationId = req.query.g;
+  let nonce = req.query.n;
+  await authenticateUser(axios, nonce, userId, TESTMODE, false).then(async (result) => {
+    if(result){
+      await db.saveGeneration(generationId);
+      res.status(200).send("Saved Generation");
+    }
+    else{
+      res.status(400).send("Failed to save generation");
+    }
+  });
+});
+
 
 app.get(`/getUserGenerationCount`, async (req, res) => {
   if(!validateClientRequest(req)){
@@ -62,12 +87,28 @@ app.get(`/${checkDbString}`, async (req, res) => {
     failRequest(res, 404);
   }
   else {
-    let generationData = await db.getGeneration(generationUuid);
+    if(TESTMODE){
+      res.status(200).send({
+        imageUrl : "https://storage.googleapis.com/realize-public/019a0a6b-a042-4404-b7e6-cf37e4855699FFFF.jpg",
+        depthmapUrl : "https://storage.googleapis.com/realize-public/019a0a6b-a042-4404-b7e6-cf37e4855699DDDD.jpg"
+      });
+      return;
+    }
+    
+    let generationData = await db.getActiveGeneration(generationUuid);
+
     if (generationData.file_url) {
       console.log("Image url found for generation ID: " + generationUuid);
       console.log("Sending user URL: " + generationData.file_url)
+
+      var generationDataResponse = {
+        imageUrl: generationData.file_url,
+        depthmapUrl: generationData.depth_map_url
+      }
+
       await db.moveBlockadeData(generationUuid);
-      res.status(200).send(generationData.file_url);
+
+      res.status(200).send(generationDataResponse);
     }
     else {
       console.log("Image url not found for generation ID: " + generationUuid);
@@ -107,7 +148,7 @@ app.get(`/${endpointString}`, async (req, res) => {
   }
   const { n: nonce, u: userId, p: prompt } = req.query;
 
-  if (!nonce || !userId || !prompt || SERVERSTATUSCODE == 0) {
+  if (!nonce || !userId || SERVERSTATUSCODE == 0) {
     failRequest(res);
     return;
   }
@@ -130,15 +171,15 @@ app.get(`/${endpointString}`, async (req, res) => {
       console.log("Received user info, full access. Calling Blockade API");
       const generationUuid = uuidv4();
       await db.storeUuid(generationUuid, userId, prompt, TESTMODE);
-      db.decrementUserGenerationCount(userId);
+      db.decrementUserGenerationCount(userId, TESTMODE);
 
       await get360Image(axios, prompt, generationUuid, TESTMODE).then(() => {
         if (TESTMODE){
           console.log("Sent User TEST Response")
-          res.status(200).send({ generationId: "c52c73e3-4b9d-475b-863c-d2a10f8cb6b1"});
+          res.status(200).send("c52c73e3-4b9d-475b-863c-d2a10f8cb6b1");
         }
         else{
-          res.status(200).send({ generationId: generationUuid});
+          res.status(200).send(generationUuid);
         }
       });
     }
