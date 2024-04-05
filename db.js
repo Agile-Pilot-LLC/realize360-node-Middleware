@@ -25,7 +25,7 @@ const savedGenerationsCollection = db.collection(savedGenerationsDatabaseName);
 
 async function moveBlockadeData(uuid){
   // move data from activeGenerations to generations
-  let generationData = await getGeneration(uuid);
+  let generationData = await getActiveGeneration(uuid);
   if(generationData){
     await generationCollection.doc(uuid).set({...generationData, expireAt: Date.now()});
     console.log(`Moved Blockade Data for UUID "${uuid}" to "${generationDatabaseName}" collection.`);
