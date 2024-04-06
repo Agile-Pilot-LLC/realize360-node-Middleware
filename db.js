@@ -77,7 +77,7 @@ async function saveFilesToBucket(imageUrl, depthMapUrl, imageBucket, generationI
 }
 
 async function saveGeneration(generationId){
-  const { file_url, depth_map_url, id, completed_at, metaUserId } = await getColdGeneration(generationId);
+  const { file_url, depth_map_url, id, completed_at, metaUserId } = await getTemporaryGeneration(generationId);
   await savedGenerationsCollection.doc(generationId).set({
     metaUserId: metaUserId,
     imageUrl: file_url,
@@ -86,7 +86,9 @@ async function saveGeneration(generationId){
     completedAt: completed_at
   });
   console.log(`Saved image URL "${file_url}" for user "${metaUserId}" in "${savedGenerationsDatabaseName}" collection.`);
+
   // store contents of imageUrl file and depthMapUrl file in bucket
+  await decrementSavesRemaining(metaUserId);
   await saveFilesToBucket(file_url, depth_map_url, imageBucket, generationId);
 }
 
@@ -94,8 +96,10 @@ async function addUser(userId){
   // add new entry to users collection
   await userCollection.doc(userId).set({
     meta_id: userId,
-    generationsRemaining: 25
+    generationsRemaining: 1,
+    savesRemaining: 10
   });
+
   console.log(`Added user "${userId}" to "${userDatabaseName}" collection.`);
 }
 
@@ -118,6 +122,37 @@ async function decrementUserGenerationCount(userId, TESTMODE){
   }
 }
 
+async function decrementSavesRemaining(userId, TESTMODE){
+  // decrement saves remaining for user
+  if(TESTMODE){
+    return;
+  }
+  let user = await getUserData(userId);
+  let savesRemaining = user.savesRemaining;
+  if(savesRemaining > 0){
+    savesRemaining--;
+    await userCollection.doc(userId).set({
+      savesRemaining: savesRemaining
+    }, { merge: true });
+    console.log(`Decremented saves remaining for user "${userId}" in "${userDatabaseName}" collection.`);
+  }
+  else{
+    console.log(`User "${userId}" has no saves remaining.`);
+  }
+}
+async function incrementSavesRemaining(userId, TESTMODE){
+  // increment saves remaining for user
+  if(TESTMODE){
+    return;
+  }
+  let user = await getUserData(userId);
+  let savesRemaining = user.savesRemaining;
+  savesRemaining++;
+  await userCollection.doc(userId).set({
+    savesRemaining: savesRemaining
+  }, { merge: true });
+  console.log(`Incremented saves remaining for user "${userId}" in "${userDatabaseName}" collection.`);
+}
 async function getUserGenerationCount(userId){
   let user = await getUserData(userId);
   // if there is no user data return -1
@@ -155,7 +190,7 @@ async function getActiveGeneration(uuid){
   return generation;
 }
 
-async function getColdGeneration(uuid){
+async function getTemporaryGeneration(uuid){
   let generation = false;
   await generationCollection.doc(uuid).get().then((doc) => {
     if(doc.exists){
@@ -230,13 +265,19 @@ async function deleteSavedGeneration(userId, generationId){
   if(savedGeneration){
     if(savedGeneration.metaUserId == userId){
       await savedGenerationsCollection.doc(generationId).delete();
-
       console.log(`Deleted saved generation for UUID "${generationId}" from "${savedGenerationsDatabaseName}" collection.`);
+
+      await incrementSavesRemaining(userId);
     }
     else{
       console.log(`User "${userId}" does not own saved generation for UUID "${generationId}".`);
     }
   }
+}
+
+async function getSavesRemaining(userId){
+  let user = await getUserData(userId);
+  return user.savesRemaining;
 }
 
 module.exports = {
@@ -252,5 +293,6 @@ module.exports = {
   getGenerationTestMode,
   saveGeneration,
   getSavedGenerations,
-  deleteSavedGeneration
+  deleteSavedGeneration,
+  getSavesRemaining
 };

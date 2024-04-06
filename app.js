@@ -37,6 +37,16 @@ app.get('/privacy-policy', (req, res) => {
   res.sendFile(path.join(__dirname, 'privacypolicy.html'));
 });
 
+app.get('/savesRemaining', async (req, res) => {  
+  if(!validateClientRequest(req)){
+    failRequest(res);
+    return;
+  }
+  let userId = req.query.u;
+  let savesRemaining = await db.getSavesRemaining(userId);
+  res.status(200).send(`${savesRemaining}`);
+});
+
 app.get('/status', (req, res) => {  
   res.status(200).send(`${SERVERSTATUSCODE}`);
 });
@@ -62,7 +72,7 @@ app.get(`/${SAVE_GENERATION_ENDPOINT}`, async (req, res) => {
   let userId = req.query.u;
   let generationId = req.query.g;
   let nonce = req.query.n;
-  
+
   await authenticateUser(axios, nonce, userId, TESTMODE, false).then(async (result) => {
     if(result){
       await db.saveGeneration(generationId);
