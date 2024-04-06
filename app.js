@@ -1,14 +1,19 @@
 // NPM Dependencies
 require('dotenv').config();
 const express = require('express');
-const app = express();
 const helmet = require('helmet');
 const bodyParser = require('body-parser');
-app.use(helmet(), bodyParser.json());
 const md5 = require('md5');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
+
+// App Instantiate
+const app = express();
+
+// Middleware 
+// TODO: Add query parameter sanitization
+app.use(helmet(), bodyParser.json());
 
 // Custom Dependencies
 const db = require('./db.js');
