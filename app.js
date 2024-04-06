@@ -23,6 +23,9 @@ const validateClientRequest = require('./utils/validateClientRequest.js');
 const endpointString = md5(process.env.ENDPOINT);
 const sendGenerationString = md5(process.env.SEND_GENERATION);
 const checkDbString = md5(process.env.CHECK_DB);
+const saveGenerationString = md5(process.env.SAVE_GENERATION_ENDPOINT);
+const deleteGenerationEndpoint = md5(process.env.DELETE_GENERATION_ENDPOINT);
+
 const isDevEnvironment = process.env.NODE_ENV === 'development';
 
 const TESTMODE = isDevEnvironment ? true : false;
@@ -34,26 +37,42 @@ app.get('/privacy-policy', (req, res) => {
   res.sendFile(path.join(__dirname, 'privacypolicy.html'));
 });
 
+app.get('/savesRemaining', async (req, res) => {  
+  if(!validateClientRequest(req)){
+    failRequest(res);
+    return;
+  }
+  let userId = req.query.u;
+  let savesRemaining = await db.getSavesRemaining(userId);
+  res.status(200).send(`${savesRemaining}`);
+});
+
 app.get('/status', (req, res) => {  
   res.status(200).send(`${SERVERSTATUSCODE}`);
 });
 app.get('/savedGenerations', async (req, res) => {
-  // TODO: Validate this request and encrypt the endpoint, make it a POST
+  if(!validateClientRequest(req)){
+    failRequest(res);
+    return;
+  }
+  // TODO: encrypt the endpoint
   let userId = req.query.u;
   let generationUuidArray = await db.getSavedGenerations(userId);
   // convert to a string with each generation uuid separated by "|"
   let generationString = generationUuidArray.join("|");
   res.status(200).send(generationString);
 });
-app.get('/saveGeneration', async (req, res) => {
+
+app.get(`/${SAVE_GENERATION_ENDPOINT}`, async (req, res) => {
   if(!validateClientRequest(req)){
     failRequest(res);
     return;
   }
-  // TODO: Validate this request and encrypt the endpoint, make it a POST
+  // TODO: make it a POST
   let userId = req.query.u;
   let generationId = req.query.g;
   let nonce = req.query.n;
+
   await authenticateUser(axios, nonce, userId, TESTMODE, false).then(async (result) => {
     if(result){
       await db.saveGeneration(generationId);
@@ -197,4 +216,30 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'homepage.html'));
 });
 
+app.delete(`/${deleteGenerationEndpoint}`, async (req, res) => {
+  if(!validateClientRequest(req)){
+    failRequest(res);
+    return;
+  }
+  let inputtedKey = req.query.k; 
+
+  if(inputtedKey != process.env.DELETE_GENERATION_KEY){
+    failRequest(res);
+    return;
+  }
+
+  let userId = req.query.u;
+  let generationId = req.query.g;
+  let nonce = req.query.n;
+
+  await authenticateUser(axios, nonce, userId, false, false).then(async (result) => {
+    if(result){
+      await db.deleteSavedGeneration(userId, generationId);
+      res.status(200).send("Deleted Generation");
+    }
+    else{
+      res.status(400).send("Failed to delete generation");
+    }
+  });
+});
 module.exports = app;
