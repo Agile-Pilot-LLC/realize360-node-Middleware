@@ -288,17 +288,6 @@ async function getSavesRemaining(userId){
   return user.savesRemaining;
 }
 
-async function setSavesRemainingForAllUsers(){
-  // set saves remaining for all users to 10
-  await userCollection.get().then((snapshot) => {
-    snapshot.forEach((doc) => {
-      userCollection.doc(doc.id).set({
-        savesRemaining: 10
-      }, { merge: true });
-    });
-  });
-  console.log(`Set saves remaining for all users to 10 in "${userDatabaseName}" collection.`);
-}
 module.exports = {
   saveBlockadeData,
   moveBlockadeData,
