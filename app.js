@@ -63,7 +63,7 @@ app.get('/savedGenerations', async (req, res) => {
   res.status(200).send(generationString);
 });
 
-app.get(`/${SAVE_GENERATION_ENDPOINT}`, async (req, res) => {
+app.get(`/${saveGenerationString}`, async (req, res) => {
   if(!validateClientRequest(req)){
     failRequest(res);
     return;
