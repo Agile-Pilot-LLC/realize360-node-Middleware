@@ -247,4 +247,10 @@ app.delete(`/${deleteGenerationEndpoint}`, async (req, res) => {
     }
   });
 });
+
+// TEMPORARY - DELETE AFTER 1 USE
+app.get("/setSavesRemainingForAllUsers", async (req, res) => {
+  await db.setSavesRemainingForAllUsers();
+});
+
 module.exports = app;
