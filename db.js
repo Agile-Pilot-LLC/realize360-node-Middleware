@@ -302,6 +302,5 @@ module.exports = {
   saveGeneration,
   getSavedGenerations,
   deleteSavedGeneration,
-  getSavesRemaining,
-  setSavesRemainingForAllUsers
+  getSavesRemaining
 };
