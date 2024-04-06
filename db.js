@@ -78,6 +78,14 @@ async function saveFilesToBucket(imageUrl, depthMapUrl, imageBucket, generationI
 
 async function saveGeneration(generationId){
   const { file_url, depth_map_url, id, completed_at, metaUserId } = await getTemporaryGeneration(generationId);
+  
+  // check users remaining saves
+  let user = await getUserData(metaUserId);
+  if(user.savesRemaining <= 0){
+    console.log(`User "${metaUserId}" has no saves remaining.`);
+    return;
+  }
+  
   await savedGenerationsCollection.doc(generationId).set({
     metaUserId: metaUserId,
     imageUrl: file_url,
