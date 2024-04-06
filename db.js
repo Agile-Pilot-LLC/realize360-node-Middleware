@@ -274,7 +274,11 @@ async function deleteSavedGeneration(userId, generationId){
     if(savedGeneration.metaUserId == userId){
       await savedGenerationsCollection.doc(generationId).delete();
       console.log(`Deleted saved generation for UUID "${generationId}" from "${savedGenerationsDatabaseName}" collection.`);
-
+      // delete from storage bucket
+      await imageBucket.file(generationId + "FFFF.jpg").delete();
+      await imageBucket.file(generationId + "DDDD.jpg").delete();
+      console.log(`Deleted saved generation files from bucket.`);
+      
       await incrementSavesRemaining(userId);
     }
     else{
