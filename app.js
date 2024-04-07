@@ -24,6 +24,7 @@ const validateBlockadeHeaders = require('./utils/validateBlockadeHeaders.js');
 const validateUuid = require('./utils/validateUuid.js');
 const validateClientRequest = require('./utils/validateClientRequest.js');
 const consumePurchase = require('./utils/consumePurchase.js');
+const requestMusicType = require('./utils/requestMusicType.js');
 
 // Variables
 const endpointString = md5(process.env.ENDPOINT);
@@ -285,6 +286,12 @@ app.get(`/${addGenerationEndpoint}`, async (req, res) => {
       res.status(400).send("Failed to add generation");
     }
   });
+});
+
+app.get('/requestMusicType', async (req, res) => {
+  const prompt = req.query.p;
+  const response = await requestMusicType(prompt);
+  res.status(200).send(response);
 });
 
 module.exports = app;
