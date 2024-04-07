@@ -31,7 +31,8 @@ async function requestMusicType(prompt){
                 role: 'user',
                 content: prompt
             }
-        ]
+        ],
+        model: 'gpt-3.5-turbo'
     })
     return completion.choices[0];
 }
