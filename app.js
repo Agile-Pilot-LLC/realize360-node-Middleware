@@ -57,7 +57,7 @@ app.get('/savesRemaining', async (req, res) => {
     failRequest(res, 404);
     return;
   }
-  
+
   let savesRemaining = await db.getSavesRemaining(userId);
   res.status(200).send(`${savesRemaining}`);
 });
@@ -327,7 +327,6 @@ app.get(`/${requestMusicEndpoint}`, async (req, res) => {
 
   await authenticateUser(axios, nonce, userId, false, false).then(async (result) => {
     if(result){
-      let prompt = req.query.p;
       let musicType = await requestMusicType(prompt);
       res.status(200).send(musicType);
     }
