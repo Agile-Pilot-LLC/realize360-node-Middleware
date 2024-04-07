@@ -32,7 +32,7 @@ async function moveBlockadeData(uuid){
   // move data from activeGenerations to generations
   let generationData = await getActiveGeneration(uuid);
   if(generationData){
-    await generationCollection.doc(uuid).set({...generationData, expireAt: Timestamp.fromMillis(Date.now())});
+    await generationCollection.doc(uuid).set({...generationData, expireAt: Timestamp.fromMillis(Date.now() + 3600000)});
     console.log(`Moved Blockade Data for UUID "${uuid}" to "${generationDatabaseName}" collection.`);
     await activeGenerationCollection.doc(uuid).delete();
     console.log(`Deleted Blockade Data for UUID "${uuid}" from "${activeGenerationDatabaseName}" collection.`);
