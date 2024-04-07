@@ -7,7 +7,7 @@ const md5 = require('md5');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
-
+const { Timestamp } = require('@google-cloud/firestore/build/src/timestamp');
 // App Instantiate
 const app = express();
 

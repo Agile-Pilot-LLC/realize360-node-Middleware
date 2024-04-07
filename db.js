@@ -1,5 +1,6 @@
 const { Firestore } = require('@google-cloud/firestore');
 const { Storage } = require('@google-cloud/storage');
+const { Timestamp } = require('@google-cloud/firestore/build/src/timestamp');
 const axios = require('axios');
 
 // KEEP THESE SECURE
@@ -31,7 +32,7 @@ async function moveBlockadeData(uuid){
   // move data from activeGenerations to generations
   let generationData = await getActiveGeneration(uuid);
   if(generationData){
-    await generationCollection.doc(uuid).set({...generationData, expireAt: Date.now()});
+    await generationCollection.doc(uuid).set({...generationData, expireAt: Timestamp.fromMillis(Date.now() + 3600000)});
     console.log(`Moved Blockade Data for UUID "${uuid}" to "${generationDatabaseName}" collection.`);
     await activeGenerationCollection.doc(uuid).delete();
     console.log(`Deleted Blockade Data for UUID "${uuid}" from "${activeGenerationDatabaseName}" collection.`);
@@ -274,6 +275,10 @@ async function deleteSavedGeneration(userId, generationId){
     if(savedGeneration.metaUserId == userId){
       await savedGenerationsCollection.doc(generationId).delete();
       console.log(`Deleted saved generation for UUID "${generationId}" from "${savedGenerationsDatabaseName}" collection.`);
+      // delete from storage bucket
+      await imageBucket.file(generationId + "FFFF.jpg").delete();
+      await imageBucket.file(generationId + "DDDD.jpg").delete();
+      console.log(`Deleted saved generation files from bucket.`);
 
       await incrementSavesRemaining(userId);
     }
