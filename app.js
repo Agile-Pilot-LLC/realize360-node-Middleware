@@ -30,6 +30,7 @@ const sendGenerationString = md5(process.env.SEND_GENERATION);
 const checkDbString = md5(process.env.CHECK_DB);
 const saveGenerationString = md5(process.env.SAVE_GENERATION_ENDPOINT);
 const deleteGenerationEndpoint = md5(process.env.DELETE_GENERATION_ENDPOINT);
+const addGenerationEndpoint = md5(process.env.ADD_GENERATION_ENDPOINT);
 
 const isDevEnvironment = process.env.NODE_ENV === 'development';
 
@@ -248,4 +249,29 @@ app.delete(`/${deleteGenerationEndpoint}`, async (req, res) => {
   });
 });
 
+app.get(`/${addGenerationEndpoint}`, async (req, res) => {
+  if(!validateClientRequest(req)){
+    failRequest(res);
+    return;
+  }
+  let inputtedKey = req.query.k; 
+
+  if(inputtedKey != process.env.ADD_GENERATION_KEY){
+    failRequest(res);
+    return;
+  }
+
+  let userId = req.query.u;
+  let nonce = req.query.n;
+
+  await authenticateUser(axios, nonce, userId, false, false).then(async (result) => {
+    if(result){
+      await db.add25Generations(userId);
+      res.status(200).send("Added 25 Generations to user");
+    }
+    else{
+      res.status(400).send("Failed to add generation");
+    }
+  });
+});
 module.exports = app;
