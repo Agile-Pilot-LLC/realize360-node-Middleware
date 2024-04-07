@@ -10,7 +10,7 @@ async function requestMusicType(prompt){
                     You are a robot designed specifically to correlate a prompt with a list of ways that music could "feel", even though you dont feel anything - you use your best knowledge to determine the correlation.
 
                     Based on the prompt given by the user, select one feeling from a list of "feelings" (surrounded by [] brackets) that resembles the prompt the closest. 
-                    Respond with only the feeling name as it is written. If there is low correlation to any of the following, just respond none.
+                    Respond with only the feeling name as it is written and don't include any brackets. If there is low correlation to any of the following, just respond none.
 
                     [Action]
                     [Bouncy]
@@ -34,7 +34,7 @@ async function requestMusicType(prompt){
         ],
         model: 'gpt-3.5-turbo'
     })
-    return completion.choices[0];
+    return completion.choices[0].message.content;
 }
 
 module.exports = requestMusicType;
