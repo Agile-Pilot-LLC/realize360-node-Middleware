@@ -21,5 +21,7 @@ app.listen(PORT, () =>
     console.log(`Delete Generation Key: ${deleteGenerationKey}`);
     console.log(`Add Generation Endpoint: ${md5(process.env.ADD_GENERATION_ENDPOINT)}`);
     console.log(`Add Generation Key: ${process.env.ADD_GENERATION_KEY}`)
+    console.log(`Request Music Endpoint: ${md5(process.env.REQUEST_MUSIC_ENDPOINT)}`);
+    console.log(`Request Music Key: ${process.env.REQUEST_MUSIC_KEY}`);
   }
 );
