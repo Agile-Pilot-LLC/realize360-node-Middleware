@@ -33,6 +33,7 @@ const checkDbString = md5(process.env.CHECK_DB);
 const saveGenerationString = md5(process.env.SAVE_GENERATION_ENDPOINT);
 const deleteGenerationEndpoint = md5(process.env.DELETE_GENERATION_ENDPOINT);
 const addGenerationEndpoint = md5(process.env.ADD_GENERATION_ENDPOINT);
+const requestMusicEndpoint = md5(process.env.REQUEST_MUSIC_ENDPOINT);
 
 const isDevEnvironment = process.env.NODE_ENV === 'development';
 
@@ -51,6 +52,12 @@ app.get('/savesRemaining', async (req, res) => {
     return;
   }
   let userId = req.query.u;
+
+  if(!userId){
+    failRequest(res, 404);
+    return;
+  }
+  
   let savesRemaining = await db.getSavesRemaining(userId);
   res.status(200).send(`${savesRemaining}`);
 });
@@ -65,6 +72,12 @@ app.get('/savedGenerations', async (req, res) => {
   }
   // TODO: encrypt the endpoint
   let userId = req.query.u;
+
+  if(!userId){
+    failRequest(res, 404);
+    return;
+  }
+
   let generationUuidArray = await db.getSavedGenerations(userId);
   // convert to a string with each generation uuid separated by "|"
   let generationString = generationUuidArray.join("|");
@@ -80,6 +93,11 @@ app.get(`/${saveGenerationString}`, async (req, res) => {
   let userId = req.query.u;
   let generationId = req.query.g;
   let nonce = req.query.n;
+
+  if(!userId || !generationId || !nonce ){
+    failRequest(res, 404);
+    return;
+  }
 
   await authenticateUser(axios, nonce, userId, TESTMODE, false).then(async (result) => {
     if(result){
@@ -288,10 +306,35 @@ app.get(`/${addGenerationEndpoint}`, async (req, res) => {
   });
 });
 
-app.get('/requestMusicType', async (req, res) => {
-  const prompt = req.query.p;
-  const response = await requestMusicType(prompt);
-  res.status(200).send(response);
+app.get(`/${requestMusicEndpoint}`, async (req, res) => {
+  if(!validateClientRequest(req)){
+    failRequest(res);
+    return;
+  }
+  let inputtedKey = req.query.k; 
+
+  if(inputtedKey != process.env.REQUEST_MUSIC_KEY){
+    failRequest(res);
+    return;
+  }
+
+  const { n: nonce, u: userId, p: prompt } = req.query;
+
+  if (!nonce || !userId || SERVERSTATUSCODE == 0) {
+    failRequest(res);
+    return;
+  }
+
+  await authenticateUser(axios, nonce, userId, false, false).then(async (result) => {
+    if(result){
+      let prompt = req.query.p;
+      let musicType = await requestMusicType(prompt);
+      res.status(200).send(musicType);
+    }
+    else{
+      res.status(400).send("Failed to request music type");
+    }
+  });
 });
 
 module.exports = app;
