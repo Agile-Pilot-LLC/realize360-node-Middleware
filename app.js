@@ -23,6 +23,7 @@ const failRequest = require('./utils/failRequest.js');
 const validateBlockadeHeaders = require('./utils/validateBlockadeHeaders.js');
 const validateUuid = require('./utils/validateUuid.js');
 const validateClientRequest = require('./utils/validateClientRequest.js');
+const consumePurchase = require('./utils/consumePurchase.js');
 
 // Variables
 const endpointString = md5(process.env.ENDPOINT);
@@ -266,6 +267,7 @@ app.get(`/${addGenerationEndpoint}`, async (req, res) => {
 
   await authenticateUser(axios, nonce, userId, false, false).then(async (result) => {
     if(result){
+      await consumePurchase("001", userId);
       await db.logPurchase(userId, "25 generations");
       console.log("Logged purchase of 25 generations for user ID: " + userId);
 
