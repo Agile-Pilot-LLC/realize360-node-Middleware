@@ -266,7 +266,11 @@ app.get(`/${addGenerationEndpoint}`, async (req, res) => {
 
   await authenticateUser(axios, nonce, userId, false, false).then(async (result) => {
     if(result){
+      await db.logPurchase(userId, "25 generations");
+      console.log("Logged purchase of 25 generations for user ID: " + userId);
+
       await db.add25Generations(userId);
+      
       res.status(200).send("Added 25 Generations to user");
     }
     else{
@@ -274,4 +278,5 @@ app.get(`/${addGenerationEndpoint}`, async (req, res) => {
     }
   });
 });
+
 module.exports = app;

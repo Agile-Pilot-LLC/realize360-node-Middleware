@@ -22,11 +22,13 @@ const generationDatabaseName = "generations";
 const activeGenerationDatabaseName = "active-generations";
 const userDatabaseName = "users";
 const savedGenerationsDatabaseName = "saved-generations";
+const purchaseDatabaseName = "purchases";
 
 const activeGenerationCollection = db.collection(activeGenerationDatabaseName);
 const generationCollection = db.collection(generationDatabaseName);
 const userCollection = db.collection(userDatabaseName);
 const savedGenerationsCollection = db.collection(savedGenerationsDatabaseName);
+const purchaseCollection = db.collection(purchaseDatabaseName);
 
 async function moveBlockadeData(uuid){
   // move data from activeGenerations to generations
@@ -303,6 +305,15 @@ async function add25Generations(userId){
   console.log(`Added 25 generations to user "${userId}" in "${userDatabaseName}" collection.`);
 }
 
+async function logPurchase(userId, purchaseDescription){
+  await purchaseCollection.doc().set({
+    userId: userId,
+    description: purchaseDescription,
+    timestamp: Date.now()
+  });
+  console.log(`Logged purchase for user "${userId}" in "${purchaseDatabaseName}" collection.`);
+}
+
 module.exports = {
   saveBlockadeData,
   moveBlockadeData,
@@ -318,5 +329,6 @@ module.exports = {
   getSavedGenerations,
   deleteSavedGeneration,
   getSavesRemaining,
-  add25Generations
+  add25Generations,
+  logPurchase
 };
