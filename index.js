@@ -19,5 +19,7 @@ app.listen(PORT, () =>
     console.log(`Save Generation Endpoint: ${saveGenerationString}`);
     console.log(`Delete Generation Endpoint: ${deleteGenerationString}`);
     console.log(`Delete Generation Key: ${deleteGenerationKey}`);
+    console.log(`Add Generation Endpoint: ${md5(process.env.ADD_GENERATION_ENDPOINT)}`);
+    console.log(`Add Generation Key: ${process.env.ADD_GENERATION_KEY}`)
   }
 );

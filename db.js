@@ -293,6 +293,16 @@ async function getSavesRemaining(userId){
   return user.savesRemaining;
 }
 
+async function add25Generations(userId){
+  let user = await getUserData(userId);
+  let generationsRemaining = user.generationsRemaining;
+  generationsRemaining += 25;
+  await userCollection.doc(userId).set({
+    generationsRemaining: generationsRemaining
+  }, { merge: true });
+  console.log(`Added 25 generations to user "${userId}" in "${userDatabaseName}" collection.`);
+}
+
 module.exports = {
   saveBlockadeData,
   moveBlockadeData,
@@ -307,5 +317,6 @@ module.exports = {
   saveGeneration,
   getSavedGenerations,
   deleteSavedGeneration,
-  getSavesRemaining
+  getSavesRemaining,
+  add25Generations
 };
