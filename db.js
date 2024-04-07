@@ -107,7 +107,7 @@ async function addUser(userId){
   // add new entry to users collection
   await userCollection.doc(userId).set({
     meta_id: userId,
-    generationsRemaining: 1,
+    generationsRemaining: 25,
     savesRemaining: 10
   });
 
