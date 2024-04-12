@@ -10,12 +10,13 @@ module.exports = async function get360Image(axios = null, prompt, generationUuid
         'x-api-key': process.env.BLOCKADE_API_KEY,
         'Content-Type': 'application/json'
     };
+    
     const genReceiveEndpoint = md5(process.env.SEND_GENERATION);
 
     // Define the data to be sent in the body
     const data = {
         prompt: prompt,
-        webhook_url: `https://realize.agilepilot.co/${genReceiveEndpoint}?g=${generationUuid}`
+        webhook_url: `https://realize360api-0-0-2-duyrq6q27q-uc.a.run.app/${genReceiveEndpoint}?g=${generationUuid}`
     };
 
     // Define the endpoint
