@@ -17,14 +17,14 @@ app.use(helmet(), bodyParser.json());
 
 // Custom Dependencies
 const db = require('./db.js');
-const authenticateUser = require('./authenticate.js');
-const get360Image = require('./get360Image.js');
-const failRequest = require('./utils/failRequest.js');
-const validateBlockadeHeaders = require('./utils/validateBlockadeHeaders.js');
-const validateUuid = require('./utils/validateUuid.js');
-const validateClientRequest = require('./utils/validateClientRequest.js');
-const consumePurchase = require('./utils/consumePurchase.js');
-const requestMusicType = require('./utils/requestMusicType.js');
+const authenticateUser = require('./api/utils/authenticate.js');
+const get360Image = require('./api/utils/get360Image.js');
+const failRequest = require('./api/utils/failRequest.js');
+const validateBlockadeHeaders = require('./api/utils/validateBlockadeHeaders.js');
+const validateUuid = require('./api/utils/validateUuid.js');
+const validateClientRequest = require('./api/utils/validateClientRequest.js');
+const consumePurchase = require('./api/utils/consumePurchase.js');
+const requestMusicType = require('./api/utils/requestMusicType.js');
 
 // Variables
 const endpointString = md5(process.env.ENDPOINT);
@@ -42,10 +42,6 @@ const TESTMODE = isDevEnvironment ? true : false;
   // 1 = Up, accept users
 const SERVERSTATUSCODE = 1;
 
-app.get('/privacy-policy', (req, res) => {
-  res.sendFile(path.join(__dirname, 'privacypolicy.html'));
-});
-
 app.get('/savesRemaining', async (req, res) => {  
   if(!validateClientRequest(req)){
     failRequest(res);
@@ -61,10 +57,7 @@ app.get('/savesRemaining', async (req, res) => {
   let savesRemaining = await db.getSavesRemaining(userId);
   res.status(200).send(`${savesRemaining}`);
 });
-
-app.get('/status', (req, res) => {  
-  res.status(200).send(`${SERVERSTATUSCODE}`);
-});
+;
 app.get('/savedGenerations', async (req, res) => {
   if(!validateClientRequest(req)){
     failRequest(res);
@@ -236,10 +229,6 @@ app.get(`/${endpointString}`, async (req, res) => {
       failRequest(res);
     }
   })
-});
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'homepage.html'));
 });
 
 app.delete(`/${deleteGenerationEndpoint}`, async (req, res) => {

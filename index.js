@@ -1,5 +1,6 @@
 const app = require('./app.js');
 const md5 = require('md5');
+const addFrontEnd = require('./addFrontEnd.js');
 
 const PORT = parseInt(parseInt(process.env.PORT)) || 8080;
 
@@ -8,6 +9,8 @@ const checkDbString = md5(process.env.CHECK_DB);
 const saveGenerationString = md5(process.env.SAVE_GENERATION_ENDPOINT);
 const deleteGenerationString = md5(process.env.DELETE_GENERATION_ENDPOINT);
 const deleteGenerationKey = process.env.DELETE_GENERATION_KEY;
+
+addFrontEnd(app);
 
 app.listen(PORT, () =>
   {
