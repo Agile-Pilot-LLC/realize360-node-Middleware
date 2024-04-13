@@ -1,3 +1,4 @@
+const path = require('path');
 // 0 = Down, reject users
   // 1 = Up, accept users
 const SERVERSTATUSCODE = 1;
