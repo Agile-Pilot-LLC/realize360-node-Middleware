@@ -1,6 +1,6 @@
 // Define the function to authenticate the user
-const addNewUser = require('./utils/addNewUser.js');
-const db = require('./db.js');
+const addNewUser = require('./addNewUser.js');
+const db = require('../../db.js');
 
 module.exports = async function authenticateUser(axios = null, nonce, userId, testmode = false, bypassMetaAuth) {
     // Define the access token (replace $APP_ID and $APP_SECRET with your actual values)
