@@ -38,9 +38,6 @@ const requestMusicEndpoint = md5(process.env.REQUEST_MUSIC_ENDPOINT);
 const isDevEnvironment = process.env.NODE_ENV === 'development';
 
 const TESTMODE = isDevEnvironment ? true : false;
-// 0 = Down, reject users
-  // 1 = Up, accept users
-const SERVERSTATUSCODE = 1;
 
 app.get('/savesRemaining', async (req, res) => {  
   if(!validateClientRequest(req)){
