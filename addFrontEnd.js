@@ -6,13 +6,13 @@ const SERVERSTATUSCODE = 1;
 const frontEndHtmlPathRoot = '/frontend/html';
 
 function addFrontEnd(app){
-    app.get('/status', (req, res) => {  
+    app.get('/status', (res) => {  
         res.status(200).send(`${SERVERSTATUSCODE}`);
     });
-    app.get('/privacy-policy', (req, res) => {
+    app.get('/privacy-policy', (res) => {
         res.sendFile(path.join(__dirname, `${frontEndHtmlPathRoot}/privacypolicy.html`));
     });
-    app.get('/', (req, res) => {
+    app.get('/', (res) => {
         res.sendFile(path.join(__dirname, `${frontEndHtmlPathRoot}/homepage.html`));
     });
 }
