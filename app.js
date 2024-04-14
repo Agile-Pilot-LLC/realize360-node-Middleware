@@ -186,7 +186,7 @@ app.get(`/${endpointString}`, async (req, res) => {
   }
   const { n: nonce, u: userId, p: prompt } = req.query;
 
-  if (!nonce || !userId || SERVERSTATUSCODE == 0) {
+  if (!nonce || !userId) {
     failRequest(res);
     return;
   }
@@ -305,7 +305,7 @@ app.get(`/${requestMusicEndpoint}`, async (req, res) => {
 
   const { n: nonce, u: userId, p: prompt } = req.query;
 
-  if (!nonce || !userId || SERVERSTATUSCODE == 0) {
+  if (!nonce || !userId) {
     failRequest(res);
     return;
   }
