@@ -16,6 +16,8 @@ app.listen(PORT, () =>
   {
     // List endpoints
     console.log(`realize360-node-Middleware (Environment: ${process.env.NODE_ENV}) listening on ${PORT}`);
+    /* old debug code 
+    
     console.log(`Start Generation Endpoint: ${endpointString}`);
     console.log(`Poll Generation Endpoint: ${checkDbString}`);
     console.log(`Poll Key: ${process.env.CHECK_DB_KEY}`);
@@ -26,5 +28,7 @@ app.listen(PORT, () =>
     console.log(`Add Generation Key: ${process.env.ADD_GENERATION_KEY}`)
     console.log(`Request Music Endpoint: ${md5(process.env.REQUEST_MUSIC_ENDPOINT)}`);
     console.log(`Request Music Key: ${process.env.REQUEST_MUSIC_KEY}`);
+    
+    */
   }
 );
