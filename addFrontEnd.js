@@ -1,7 +1,7 @@
 const path = require('path');
 // 0 = Down, reject users
   // 1 = Up, accept users
-const SERVERSTATUSCODE = 1;
+const SERVERSTATUSCODE = 0;
 
 const frontEndHtmlPathRoot = '/frontend/html';
 
